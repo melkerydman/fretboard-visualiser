@@ -91,16 +91,14 @@ const FretboardVisualizerContent = () => {
 
   // UI State (separate from guitar context)
   const [showSettings, setShowSettings] = useState(false);
-  const [systemDarkMode, setSystemDarkMode] = useState(false);
   const [settings, setSettings] = useState({
-    darkMode: false,
     theme: "system",
     verticalFretboard: false,
     layoutSize: "comfortable",
   });
 
   // Theme hook
-  const { themeClasses } = useTheme(settings, systemDarkMode);
+  const { themeClasses, darkMode } = useTheme(settings.theme);
 
   // Music theory hook
   const {
@@ -113,24 +111,10 @@ const FretboardVisualizerContent = () => {
   // Guitar calculations hook (available for future use)
   // const { isNoteGreyed } = useGuitarCalculations(currentTuning, capo, maxFrets);
 
-  // System dark mode detection
+  // Update settings with computed dark mode
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    setSystemDarkMode(mediaQuery.matches);
-
-    const handleChange = (e) => setSystemDarkMode(e.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  // Update computed dark mode when theme or system preference changes
-  useEffect(() => {
-    const computedDarkMode =
-      settings.theme === "dark" ||
-      (settings.theme === "system" && systemDarkMode);
-    
-    setSettings(prev => ({ ...prev, darkMode: computedDarkMode }));
-  }, [settings.theme, systemDarkMode]);
+    setSettings(prev => ({ ...prev, darkMode }));
+  }, [darkMode]);
 
   // Computed scale chords for scale view
   const scaleChords = useMemo(() => {
@@ -156,7 +140,7 @@ const FretboardVisualizerContent = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${themeClasses.background}`}>
+    <div className={`min-h-screen transition-colors duration-200 ${themeClasses.bg}`}>
       <div className="container mx-auto p-4 space-y-6">
         {/* Header */}
         <div className={`flex justify-between items-center ${themeClasses.text}`}>
@@ -176,7 +160,7 @@ const FretboardVisualizerContent = () => {
             className={`px-4 py-2 rounded font-medium transition-colors ${
               viewMode === "chord"
                 ? "bg-blue-500 text-white"
-                : themeClasses.secondaryButton
+                : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`
             }`}
           >
             Chord Mode
@@ -203,7 +187,7 @@ const FretboardVisualizerContent = () => {
             <select
               value={selectedRoot}
               onChange={(e) => setSelectedRoot(e.target.value)}
-              className={`w-full p-2 rounded border ${themeClasses.select}`}
+              className={`w-full p-2 rounded border ${themeClasses.input}`}
             >
               {availableNotes.map((note) => (
                 <option key={note} value={note}>
@@ -321,7 +305,7 @@ const FretboardVisualizerContent = () => {
                 <select
                   value={capo.strings}
                   onChange={(e) => updateCapoStrings(parseInt(e.target.value))}
-                  className={`p-1 rounded border text-sm ${themeClasses.select}`}
+                  className={`p-1 rounded border text-sm ${themeClasses.input}`}
                 >
                   {[1, 2, 3, 4, 5, 6].map((num) => (
                     <option key={num} value={num}>
@@ -333,7 +317,7 @@ const FretboardVisualizerContent = () => {
 
               <button
                 onClick={toggleCapoDirection}
-                className={`px-3 py-1 rounded text-sm transition-colors ${themeClasses.secondaryButton}`}
+                className={`px-3 py-1 rounded text-sm transition-colors ${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`}
               >
                 {capo.fromTop ? "From Top" : "From Bottom"}
               </button>
@@ -356,7 +340,7 @@ const FretboardVisualizerContent = () => {
 
         {/* Hovered Note Info */}
         {hoveredNote && (
-          <div className={`p-4 rounded border ${themeClasses.card}`}>
+          <div className={`p-4 rounded border ${themeClasses.cardBg} ${themeClasses.border}`}>
             <p className={`text-sm ${themeClasses.text}`}>
               Hovered: {hoveredNote.noteName} (String {hoveredNote.string + 1}, Fret {hoveredNote.fret})
             </p>
