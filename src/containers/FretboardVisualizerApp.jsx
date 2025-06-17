@@ -1,13 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { GuitarProvider, useGuitar } from '../context/index.js';
+import React, { useState, useMemo, useEffect } from "react";
+import { GuitarProvider, useGuitar } from "../context/index.js";
 // import { useGuitarCalculations } from '../hooks/guitar/index.js';
-import { useMusicTheory } from '../hooks/music/index.js';
-import { useTheme } from '../hooks/ui/useTheme.js';
-import { Fretboard } from '../components/guitar/index.js';
-import { SettingsModal } from '../components/ui/modals/index.js';
-import { SettingsIcon } from '../components/ui/icons/index.js';
-import MusicTheory from '../musicTheory.js';
-import { STRING_LABELS } from '../constants/index.js';
+import { useMusicTheory } from "../hooks/music/index.js";
+import { useTheme } from "../hooks/ui/useTheme.js";
+import { Fretboard } from "../components/guitar/index.js";
+import { SettingsModal } from "../components/ui/modals/index.js";
+import { SettingsIcon } from "../components/ui/icons/index.js";
+import MusicTheory from "../musicTheory.js";
+import { STRING_LABELS } from "../constants/index.js";
 
 // Custom Tuning Selector Component
 const CustomTuningSelector = ({ tuning, onChange, settings }) => {
@@ -102,18 +102,14 @@ const FretboardVisualizerContent = () => {
   const { themeClasses, darkMode, theme, setTheme } = useTheme(settings.theme);
 
   // Music theory hook
-  const {
-    chordTypes,
-    scaleTypes,
-    availableNotes,
-  } = useMusicTheory();
+  const { chordTypes, scaleTypes, availableNotes } = useMusicTheory();
 
   // Guitar calculations hook (available for future use)
   // const { isNoteGreyed } = useGuitarCalculations(currentTuning, capo, maxFrets);
 
   // Update settings with computed dark mode and sync theme
   useEffect(() => {
-    setSettings(prev => ({ ...prev, darkMode, theme }));
+    setSettings((prev) => ({ ...prev, darkMode, theme }));
   }, [darkMode, theme]);
 
   // Sync theme changes from settings to hook
@@ -126,27 +122,26 @@ const FretboardVisualizerContent = () => {
   // Computed scale chords for scale view
   const scaleChords = useMemo(() => {
     if (viewMode !== "scale") return [];
+
+    const allChordsInScale = MusicTheory.getChordsInScale(selectedRoot, selectedScale);
+    console.log("All chords in scale:", allChordsInScale, "for", selectedRoot, selectedScale);
     
+    // Group chords by root note
+    const groupedChords = {};
     const scaleNotes = MusicTheory.generateScale(selectedRoot, selectedScale);
-    const chords = [];
     
-    // Generate triads for each scale degree
     scaleNotes.forEach((note, index) => {
       const noteName = MusicTheory.semitoneToNote(note);
-      const chord = {
+      groupedChords[noteName] = {
         root: noteName,
         rootSemitone: note,
         degree: index + 1,
-        notes: [
-          note,
-          scaleNotes[(index + 2) % scaleNotes.length],
-          scaleNotes[(index + 4) % scaleNotes.length]
-        ]
+        chords: allChordsInScale.filter(chord => chord.rootName === noteName)
       };
-      chords.push(chord);
     });
-    
-    return chords;
+
+    console.log("Grouped scale chords:", groupedChords);
+    return Object.values(groupedChords);
   }, [viewMode, selectedRoot, selectedScale]);
 
   // Event handlers
@@ -167,10 +162,14 @@ const FretboardVisualizerContent = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${themeClasses.bg}`}>
+    <div
+      className={`min-h-screen transition-colors duration-200 ${themeClasses.bg}`}
+    >
       <div className="container mx-auto p-4 space-y-6">
         {/* Header */}
-        <div className={`flex justify-between items-center ${themeClasses.text}`}>
+        <div
+          className={`flex justify-between items-center ${themeClasses.text}`}
+        >
           <h1 className="text-3xl font-bold">Guitar Fretboard Visualizer</h1>
           <button
             onClick={() => setShowSettings(true)}
@@ -208,7 +207,9 @@ const FretboardVisualizerContent = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Root Note Selection */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
+            >
               Root Note
             </label>
             <select
@@ -227,7 +228,9 @@ const FretboardVisualizerContent = () => {
           {/* Chord/Scale Selection */}
           {viewMode === "chord" ? (
             <div>
-              <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
+              <label
+                className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
+              >
                 Chord Type
               </label>
               <select
@@ -244,13 +247,15 @@ const FretboardVisualizerContent = () => {
             </div>
           ) : (
             <div>
-              <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
+              <label
+                className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
+              >
                 Scale Type
               </label>
               <select
                 value={selectedScale}
                 onChange={(e) => setSelectedScale(e.target.value)}
-                className={`w-full p-2 rounded border ${themeClasses.select}`}
+                className={`w-full p-2 rounded border ${themeClasses.input}`}
               >
                 {scaleTypes.map((scale) => (
                   <option key={scale} value={scale}>
@@ -263,13 +268,15 @@ const FretboardVisualizerContent = () => {
 
           {/* Tuning Selection */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
+            >
               Tuning
             </label>
             <select
               value={selectedTuning}
               onChange={(e) => setSelectedTuning(e.target.value)}
-              className={`w-full p-2 rounded border ${themeClasses.select}`}
+              className={`w-full p-2 rounded border ${themeClasses.input}`}
             >
               {Object.keys(MusicTheory.TUNINGS).map((tuning) => (
                 <option key={tuning} value={tuning}>
@@ -282,7 +289,9 @@ const FretboardVisualizerContent = () => {
 
           {/* Max Frets */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
+            >
               Max Frets
             </label>
             <input
@@ -306,26 +315,38 @@ const FretboardVisualizerContent = () => {
         )}
 
         {/* Status Information Panel */}
-        <div className={`${themeClasses.cardBg} rounded-lg shadow-lg p-4 border ${themeClasses.border}`}>
+        <div
+          className={`${themeClasses.cardBg} rounded-lg shadow-lg p-4 border ${themeClasses.border}`}
+        >
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <span className={themeClasses.text}>
-              <strong>Current:</strong> {selectedRoot} {viewMode === "chord" ? selectedChord : selectedScale}
+              <strong>Current:</strong> {selectedRoot}{" "}
+              {viewMode === "chord" ? selectedChord : selectedScale}
               {selectedScaleChord && ` → ${selectedScaleChord.root}`}
             </span>
             <span className={themeClasses.text}>
-              <strong>Tuning:</strong> {currentTuning.map(note => MusicTheory.semitoneToNote(note)).join("-")} (Low to High)
+              <strong>Tuning:</strong>{" "}
+              {currentTuning
+                .map((note) => MusicTheory.semitoneToNote(note))
+                .join("-")}{" "}
+              (Low to High)
             </span>
             <span className={themeClasses.text}>
-              <strong>Notes:</strong> {highlightedNotes.map(note => MusicTheory.semitoneToNote(note)).join(" ")}
+              <strong>Notes:</strong>{" "}
+              {highlightedNotes
+                .map((note) => MusicTheory.semitoneToNote(note))
+                .join(" ")}
             </span>
             {capo && (
               <span className={themeClasses.text}>
-                <strong>Capo:</strong> Fret {capo.fret}, {capo.strings} strings from {capo.fromTop ? "top" : "bottom"}
+                <strong>Capo:</strong> Fret {capo.fret}, {capo.strings} strings
+                from {capo.fromTop ? "top" : "bottom"}
               </span>
             )}
             {hoveredNote && (
               <span className={themeClasses.textSecondary}>
-                <strong>Hovered:</strong> {hoveredNote.noteName} (String {hoveredNote.string + 1}, Fret {hoveredNote.fret})
+                <strong>Hovered:</strong> {hoveredNote.noteName} (String{" "}
+                {hoveredNote.string + 1}, Fret {hoveredNote.fret})
               </span>
             )}
           </div>
@@ -334,31 +355,45 @@ const FretboardVisualizerContent = () => {
         {/* Scale Chords (Scale Mode Only) */}
         {viewMode === "scale" && scaleChords.length > 0 && (
           <div>
-            <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
-              Scale Chords
+            <label
+              className={`block text-sm font-medium mb-4 ${themeClasses.text}`}
+            >
+              Chords in {selectedRoot} {selectedScale}
             </label>
-            <div className="flex flex-wrap gap-2">
-              {scaleChords.map((chord, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleScaleChordSelect(chord)}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
-                    selectedScaleChord === chord
-                      ? "bg-blue-500 text-white"
-                      : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80 border`
-                  }`}
-                >
-                  {chord.root} ({chord.degree})
-                </button>
+            
+            <div className="space-y-4">
+              {scaleChords.map((scaleChord) => (
+                <div key={scaleChord.root} className="space-y-2">
+                  <h4 className={`font-medium ${themeClasses.text}`}>
+                    {scaleChord.root} (Degree {scaleChord.degree})
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {scaleChord.chords.map((chord, chordIndex) => (
+                      <button
+                        key={`${scaleChord.root}-${chord.type}-${chordIndex}`}
+                        onClick={() => handleScaleChordSelect(chord)}
+                        className={`px-3 py-1 rounded text-sm transition-colors border ${
+                          selectedScaleChord === chord
+                            ? "bg-blue-500 text-white border-blue-500"
+                            : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`
+                        }`}
+                      >
+                        {chord.type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
-            
+
             {/* Selected Scale Chord Information */}
             {selectedScaleChord && (
-              <div className={`mt-4 p-3 rounded-md border ${themeClasses.cardBg} ${themeClasses.border}`}>
+              <div
+                className={`mt-4 p-3 rounded-md border ${themeClasses.cardBg} ${themeClasses.border}`}
+              >
                 <div className="flex items-center justify-between">
                   <span className={`font-medium ${themeClasses.text}`}>
-                    Selected: {selectedScaleChord.root} (Degree {selectedScaleChord.degree})
+                    Selected: {selectedScaleChord.name}
                   </span>
                   <button
                     onClick={() => handleScaleChordSelect(null)}
@@ -368,7 +403,10 @@ const FretboardVisualizerContent = () => {
                   </button>
                 </div>
                 <div className={`text-xs mt-1 ${themeClasses.textSecondary}`}>
-                  Notes: {selectedScaleChord.notes.map(note => MusicTheory.semitoneToNote(note)).join(" ")}
+                  Notes:{" "}
+                  {selectedScaleChord.notes
+                    .map((note) => MusicTheory.semitoneToNote(note))
+                    .join(" ")}
                 </div>
               </div>
             )}
@@ -389,7 +427,9 @@ const FretboardVisualizerContent = () => {
           {capo && (
             <>
               <div className="flex items-center space-x-2">
-                <label className={`text-sm ${themeClasses.text}`}>Strings:</label>
+                <label className={`text-sm ${themeClasses.text}`}>
+                  Strings:
+                </label>
                 <select
                   value={capo.strings}
                   onChange={(e) => updateCapoStrings(parseInt(e.target.value))}
@@ -425,7 +465,6 @@ const FretboardVisualizerContent = () => {
           recommendedCapoPositions={recommendedCapoPositions}
           settings={settings}
         />
-
       </div>
 
       {/* Settings Modal */}
