@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { GuitarProvider, useGuitar } from '../context/index.js';
-import { useGuitarCalculations } from '../hooks/guitar/index.js';
+// import { useGuitarCalculations } from '../hooks/guitar/index.js';
 import { useMusicTheory } from '../hooks/music/index.js';
 import { useTheme } from '../hooks/ui/useTheme.js';
 import { Fretboard } from '../components/guitar/index.js';
@@ -77,12 +77,9 @@ const FretboardVisualizerContent = () => {
     setSelectedRoot,
     setSelectedChord,
     setSelectedScale,
-    setViewMode,
-    setSelectedScaleChord,
     setSelectedTuning,
     setCustomTuning,
     setCapo,
-    setMaxFrets,
     setHoveredNote,
     addCapo,
     removeCapo,
@@ -113,8 +110,8 @@ const FretboardVisualizerContent = () => {
     generateScaleChords,
   } = useMusicTheory();
 
-  // Guitar calculations hook
-  const { isNoteGreyed } = useGuitarCalculations(currentTuning, capo, maxFrets);
+  // Guitar calculations hook (available for future use)
+  // const { isNoteGreyed } = useGuitarCalculations(currentTuning, capo, maxFrets);
 
   // System dark mode detection
   useEffect(() => {

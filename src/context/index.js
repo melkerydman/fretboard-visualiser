@@ -1,1 +1,2 @@
-export { GuitarProvider, useGuitar } from './GuitarContext.jsx';
+export { GuitarProvider } from './GuitarContext.jsx';
+export { useGuitar } from './GuitarContext.jsx';
