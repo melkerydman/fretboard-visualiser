@@ -80,6 +80,7 @@ const FretboardVisualizerContent = () => {
     setSelectedTuning,
     setCustomTuning,
     setCapo,
+    setMaxFrets,
     setHoveredNote,
     addCapo,
     removeCapo,
@@ -98,29 +99,55 @@ const FretboardVisualizerContent = () => {
   });
 
   // Theme hook
-  const { themeClasses, darkMode } = useTheme(settings.theme);
+  const { themeClasses, darkMode, theme, setTheme } = useTheme(settings.theme);
 
   // Music theory hook
   const {
     chordTypes,
     scaleTypes,
     availableNotes,
-    generateScaleChords,
   } = useMusicTheory();
 
   // Guitar calculations hook (available for future use)
   // const { isNoteGreyed } = useGuitarCalculations(currentTuning, capo, maxFrets);
 
-  // Update settings with computed dark mode
+  // Update settings with computed dark mode and sync theme
   useEffect(() => {
-    setSettings(prev => ({ ...prev, darkMode }));
-  }, [darkMode]);
+    setSettings(prev => ({ ...prev, darkMode, theme }));
+  }, [darkMode, theme]);
+
+  // Sync theme changes from settings to hook
+  useEffect(() => {
+    if (settings.theme !== theme) {
+      setTheme(settings.theme);
+    }
+  }, [settings.theme, theme, setTheme]);
 
   // Computed scale chords for scale view
   const scaleChords = useMemo(() => {
     if (viewMode !== "scale") return [];
-    return generateScaleChords(selectedRoot, selectedScale);
-  }, [viewMode, selectedRoot, selectedScale, generateScaleChords]);
+    
+    const scaleNotes = MusicTheory.generateScale(selectedRoot, selectedScale);
+    const chords = [];
+    
+    // Generate triads for each scale degree
+    scaleNotes.forEach((note, index) => {
+      const noteName = MusicTheory.semitoneToNote(note);
+      const chord = {
+        root: noteName,
+        rootSemitone: note,
+        degree: index + 1,
+        notes: [
+          note,
+          scaleNotes[(index + 2) % scaleNotes.length],
+          scaleNotes[(index + 4) % scaleNotes.length]
+        ]
+      };
+      chords.push(chord);
+    });
+    
+    return chords;
+  }, [viewMode, selectedRoot, selectedScale]);
 
   // Event handlers
   const handleNoteClick = (noteData) => {
@@ -157,9 +184,9 @@ const FretboardVisualizerContent = () => {
         <div className="flex space-x-2">
           <button
             onClick={() => handleViewModeChange("chord")}
-            className={`px-4 py-2 rounded font-medium transition-colors ${
+            className={`px-4 py-2 rounded font-medium transition-colors border ${
               viewMode === "chord"
-                ? "bg-blue-500 text-white"
+                ? "bg-blue-500 text-white border-blue-500"
                 : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`
             }`}
           >
@@ -167,10 +194,10 @@ const FretboardVisualizerContent = () => {
           </button>
           <button
             onClick={() => handleViewModeChange("scale")}
-            className={`px-4 py-2 rounded font-medium transition-colors ${
+            className={`px-4 py-2 rounded font-medium transition-colors border ${
               viewMode === "scale"
-                ? "bg-blue-500 text-white"
-                : themeClasses.secondaryButton
+                ? "bg-blue-500 text-white border-blue-500"
+                : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`
             }`}
           >
             Scale Mode
@@ -178,7 +205,7 @@ const FretboardVisualizerContent = () => {
         </div>
 
         {/* Controls */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Root Note Selection */}
           <div>
             <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
@@ -206,7 +233,7 @@ const FretboardVisualizerContent = () => {
               <select
                 value={selectedChord}
                 onChange={(e) => setSelectedChord(e.target.value)}
-                className={`w-full p-2 rounded border ${themeClasses.select}`}
+                className={`w-full p-2 rounded border ${themeClasses.input}`}
               >
                 {chordTypes.map((chord) => (
                   <option key={chord} value={chord}>
@@ -252,6 +279,21 @@ const FretboardVisualizerContent = () => {
               <option value="Custom">Custom</option>
             </select>
           </div>
+
+          {/* Max Frets */}
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${themeClasses.text}`}>
+              Max Frets
+            </label>
+            <input
+              type="number"
+              min="12"
+              max="24"
+              value={maxFrets}
+              onChange={(e) => setMaxFrets(parseInt(e.target.value) || 12)}
+              className={`w-full p-2 rounded border ${themeClasses.input}`}
+            />
+          </div>
         </div>
 
         {/* Custom Tuning Selector */}
@@ -262,6 +304,32 @@ const FretboardVisualizerContent = () => {
             settings={settings}
           />
         )}
+
+        {/* Status Information Panel */}
+        <div className={`${themeClasses.cardBg} rounded-lg shadow-lg p-4 border ${themeClasses.border}`}>
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <span className={themeClasses.text}>
+              <strong>Current:</strong> {selectedRoot} {viewMode === "chord" ? selectedChord : selectedScale}
+              {selectedScaleChord && ` → ${selectedScaleChord.root}`}
+            </span>
+            <span className={themeClasses.text}>
+              <strong>Tuning:</strong> {currentTuning.map(note => MusicTheory.semitoneToNote(note)).join("-")} (Low to High)
+            </span>
+            <span className={themeClasses.text}>
+              <strong>Notes:</strong> {highlightedNotes.map(note => MusicTheory.semitoneToNote(note)).join(" ")}
+            </span>
+            {capo && (
+              <span className={themeClasses.text}>
+                <strong>Capo:</strong> Fret {capo.fret}, {capo.strings} strings from {capo.fromTop ? "top" : "bottom"}
+              </span>
+            )}
+            {hoveredNote && (
+              <span className={themeClasses.textSecondary}>
+                <strong>Hovered:</strong> {hoveredNote.noteName} (String {hoveredNote.string + 1}, Fret {hoveredNote.fret})
+              </span>
+            )}
+          </div>
+        </div>
 
         {/* Scale Chords (Scale Mode Only) */}
         {viewMode === "scale" && scaleChords.length > 0 && (
@@ -277,13 +345,33 @@ const FretboardVisualizerContent = () => {
                   className={`px-3 py-1 rounded text-sm transition-colors ${
                     selectedScaleChord === chord
                       ? "bg-blue-500 text-white"
-                      : themeClasses.secondaryButton
+                      : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80 border`
                   }`}
                 >
                   {chord.root} ({chord.degree})
                 </button>
               ))}
             </div>
+            
+            {/* Selected Scale Chord Information */}
+            {selectedScaleChord && (
+              <div className={`mt-4 p-3 rounded-md border ${themeClasses.cardBg} ${themeClasses.border}`}>
+                <div className="flex items-center justify-between">
+                  <span className={`font-medium ${themeClasses.text}`}>
+                    Selected: {selectedScaleChord.root} (Degree {selectedScaleChord.degree})
+                  </span>
+                  <button
+                    onClick={() => handleScaleChordSelect(null)}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`}
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className={`text-xs mt-1 ${themeClasses.textSecondary}`}>
+                  Notes: {selectedScaleChord.notes.map(note => MusicTheory.semitoneToNote(note)).join(" ")}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -338,14 +426,6 @@ const FretboardVisualizerContent = () => {
           settings={settings}
         />
 
-        {/* Hovered Note Info */}
-        {hoveredNote && (
-          <div className={`p-4 rounded border ${themeClasses.cardBg} ${themeClasses.border}`}>
-            <p className={`text-sm ${themeClasses.text}`}>
-              Hovered: {hoveredNote.noteName} (String {hoveredNote.string + 1}, Fret {hoveredNote.fret})
-            </p>
-          </div>
-        )}
       </div>
 
       {/* Settings Modal */}
