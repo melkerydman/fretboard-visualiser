@@ -1,0 +1,1 @@
+export { GuitarProvider, useGuitar } from './GuitarContext.jsx';
