@@ -6,6 +6,7 @@ const Fretboard = ({
   tuning = MusicTheory.STANDARD_TUNING,
   capo = null,
   highlightedNotes = [],
+  selectedNotes = [],
   maxFrets = 12,
   onNoteClick = () => {},
   onNoteHover = () => {},
@@ -46,6 +47,12 @@ const Fretboard = ({
     fretMarker: settings.darkMode ? "#666" : "#ddd",
     note: settings.darkMode ? "#3B82F6" : "#3B82F6",
     noteStroke: settings.darkMode ? "#1E40AF" : "#1E40AF",
+    selectedNote: settings.darkMode ? "#F59E0B" : "#F59E0B",
+    selectedStroke: settings.darkMode ? "#D97706" : "#D97706",
+    selectedNoteAlt: settings.darkMode ? "#EF4444" : "#EF4444",
+    selectedStrokeAlt: settings.darkMode ? "#DC2626" : "#DC2626",
+    capoNote: settings.darkMode ? "#8B4513" : "#CD853F",
+    capoStroke: settings.darkMode ? "#A0522D" : "#8B4513",
     greyedNote: settings.darkMode ? "#6B7280" : "#9CA3AF",
     greyedStroke: settings.darkMode ? "#4B5563" : "#6B7280",
     capo: settings.darkMode ? "#8B4513" : "#8B4513",
@@ -374,6 +381,18 @@ const Fretboard = ({
   const renderNotes = () => {
     return notePositions.map((pos, index) => {
       const isGreyed = isNoteGreyedOut(pos.fret, pos.string);
+      
+      // Check if this specific position is selected
+      const selectedPosition = selectedNotes.find(selPos => 
+        selPos.string === pos.string && selPos.fret === pos.fret
+      );
+      const isSelected = !!selectedPosition;
+      
+      // Count how many times this note value appears in selectedNotes
+      const noteOccurrences = selectedNotes.filter(selPos => selPos.note === pos.note);
+      const occurrenceIndex = noteOccurrences.findIndex(selPos => 
+        selPos.string === pos.string && selPos.fret === pos.fret
+      );
 
       let x, y;
       if (isVertical) {
@@ -387,16 +406,44 @@ const Fretboard = ({
 
       const noteRadius = isCompact ? 8 : 12;
 
+      // Determine note styling based on state
+      let fillColor, strokeColor, opacity;
+      if (isGreyed) {
+        fillColor = theme.greyedNote;
+        strokeColor = theme.greyedStroke;
+        opacity = 0.5;
+      } else if (isSelected) {
+        // Check if this is a capo note
+        if (selectedPosition && selectedPosition.isCapo) {
+          fillColor = theme.capoNote;
+          strokeColor = theme.capoStroke;
+        } else {
+          // Alternate colors for different manual selections of the same note
+          if (occurrenceIndex % 2 === 0) {
+            fillColor = theme.selectedNote; // Orange
+            strokeColor = theme.selectedStroke;
+          } else {
+            fillColor = theme.selectedNoteAlt; // Red
+            strokeColor = theme.selectedStrokeAlt;
+          }
+        }
+        opacity = 1;
+      } else {
+        fillColor = theme.note;
+        strokeColor = theme.noteStroke;
+        opacity = 1;
+      }
+
       return (
         <g key={`note-${index}`}>
           <circle
             cx={x}
             cy={y}
             r={noteRadius}
-            fill={isGreyed ? theme.greyedNote : theme.note}
-            stroke={isGreyed ? theme.greyedStroke : theme.noteStroke}
+            fill={fillColor}
+            stroke={strokeColor}
             strokeWidth="2"
-            opacity={isGreyed ? 0.5 : 1}
+            opacity={opacity}
             className="cursor-pointer hover:fill-blue-400"
             onClick={() => onNoteClick(pos)}
             onMouseEnter={() => onNoteHover(pos)}

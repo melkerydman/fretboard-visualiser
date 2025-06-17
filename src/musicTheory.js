@@ -152,6 +152,77 @@ const MusicTheory = {
       return a.notes.length - b.notes.length;
     });
   },
+
+  identifyChords(selectedNotes) {
+    if (!selectedNotes || selectedNotes.length < 2) {
+      return [];
+    }
+
+    const normalizedNotes = [...new Set(selectedNotes.map(note => note % 12))].sort();
+    const matches = [];
+
+    // Check all possible root notes
+    for (let root = 0; root < 12; root++) {
+      Object.keys(this.CHORD_FORMULAS).forEach((chordType) => {
+        const chordNotes = this.generateChord(root, chordType);
+        
+        // Check if selected notes match this chord (allowing partial matches)
+        const matchingNotes = normalizedNotes.filter(note => chordNotes.includes(note));
+        const matchPercentage = matchingNotes.length / chordNotes.length;
+        const coveragePercentage = matchingNotes.length / normalizedNotes.length;
+        
+        // Require at least 2 matching notes and good coverage
+        if (matchingNotes.length >= 2 && coveragePercentage >= 0.6) {
+          matches.push({
+            root,
+            rootName: this.semitoneToNote(root),
+            type: chordType,
+            name: `${this.semitoneToNote(root)} ${chordType}`,
+            notes: chordNotes,
+            matchingNotes,
+            confidence: Math.round((matchPercentage * 0.7 + coveragePercentage * 0.3) * 100),
+            isPartial: matchingNotes.length < chordNotes.length,
+            hasExtraNotes: normalizedNotes.length > chordNotes.length
+          });
+        }
+      });
+    }
+
+    // Check for inversions - try each selected note as potential root
+    normalizedNotes.forEach(potentialRoot => {
+      Object.keys(this.CHORD_FORMULAS).forEach((chordType) => {
+        const chordNotes = this.generateChord(potentialRoot, chordType);
+        const matchingNotes = normalizedNotes.filter(note => chordNotes.includes(note));
+        const matchPercentage = matchingNotes.length / chordNotes.length;
+        const coveragePercentage = matchingNotes.length / normalizedNotes.length;
+        
+        if (matchingNotes.length >= 2 && coveragePercentage >= 0.6) {
+          const inversionName = potentialRoot !== normalizedNotes[0] ? " (inversion)" : "";
+          matches.push({
+            root: potentialRoot,
+            rootName: this.semitoneToNote(potentialRoot),
+            type: chordType,
+            name: `${this.semitoneToNote(potentialRoot)} ${chordType}${inversionName}`,
+            notes: chordNotes,
+            matchingNotes,
+            confidence: Math.round((matchPercentage * 0.7 + coveragePercentage * 0.3) * (inversionName ? 90 : 100)),
+            isPartial: matchingNotes.length < chordNotes.length,
+            hasExtraNotes: normalizedNotes.length > chordNotes.length,
+            isInversion: inversionName !== ""
+          });
+        }
+      });
+    });
+
+    // Remove duplicates and sort by confidence
+    const uniqueMatches = matches.filter((match, index, self) => 
+      index === self.findIndex(m => m.name === match.name)
+    );
+
+    return uniqueMatches
+      .sort((a, b) => b.confidence - a.confidence)
+      .slice(0, 8); // Limit to top 8 matches
+  },
 };
 
 export default MusicTheory;
