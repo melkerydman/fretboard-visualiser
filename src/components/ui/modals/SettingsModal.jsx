@@ -1,5 +1,5 @@
 import React from 'react';
-import { LAYOUT_OPTIONS, THEME_OPTIONS } from '../../../constants/index.js';
+import { LAYOUT_OPTIONS, THEME_OPTIONS, HANDEDNESS_OPTIONS } from '../../../constants/index.js';
 import { SettingsIcon, CloseIcon, LayoutIcon } from '../icons/index.js';
 
 const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange }) => {
@@ -11,6 +11,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange }) => {
 
   const layoutOptions = LAYOUT_OPTIONS;
   const themeOptions = THEME_OPTIONS;
+  const handednessOptions = HANDEDNESS_OPTIONS;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-4">
@@ -170,6 +171,51 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange }) => {
                       settings.darkMode ? "text-gray-300" : "text-gray-600"
                     }`}
                   />
+                  <div
+                    className={`text-sm font-medium ${
+                      settings.darkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    {option.label}
+                  </div>
+                  <div
+                    className={`text-xs mt-1 text-center ${
+                      settings.darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    {option.description}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Guitar Handedness */}
+          <div>
+            <label
+              className={`block text-sm font-medium mb-3 ${
+                settings.darkMode ? "text-gray-200" : "text-gray-700"
+              }`}
+            >
+              Guitar Handedness
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {handednessOptions.map((option) => (
+                <button
+                  key={option.value.toString()}
+                  onClick={() =>
+                    handleSettingChange("leftHanded", option.value)
+                  }
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    settings.leftHanded === option.value
+                      ? settings.darkMode
+                        ? "border-blue-500 bg-blue-900/30"
+                        : "border-blue-500 bg-blue-50"
+                      : settings.darkMode
+                      ? "border-gray-600 hover:border-gray-500"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
                   <div
                     className={`text-sm font-medium ${
                       settings.darkMode ? "text-gray-200" : "text-gray-800"

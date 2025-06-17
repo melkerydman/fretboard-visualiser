@@ -75,22 +75,37 @@ export const GuitarProvider = ({ children }) => {
     }
 
     const capoPositions = [];
-    const stringsToCapo = capo.fromTop 
-      ? currentTuning.slice(0, capo.strings)
-      : currentTuning.slice(-capo.strings);
     
-    stringsToCapo.forEach((openNote, index) => {
-      const actualStringIndex = capo.fromTop ? index : currentTuning.length - capo.strings + index;
-      const noteAtCapo = (openNote + capo.fret) % 12;
-      
-      capoPositions.push({
-        string: actualStringIndex,
-        fret: capo.fret,
-        note: noteAtCapo,
-        noteName: MusicTheory.semitoneToNote(noteAtCapo),
-        isCapo: true
-      });
-    });
+    // Determine which logical strings are covered
+    if (capo.fromTop) {
+      // Cover highest-numbered strings (thin strings)
+      for (let stringIndex = currentTuning.length - capo.strings; stringIndex < currentTuning.length; stringIndex++) {
+        const openNote = currentTuning[stringIndex];
+        const noteAtCapo = (openNote + capo.fret) % 12;
+        
+        capoPositions.push({
+          string: stringIndex,
+          fret: capo.fret,
+          note: noteAtCapo,
+          noteName: MusicTheory.semitoneToNote(noteAtCapo),
+          isCapo: true
+        });
+      }
+    } else {
+      // Cover lowest-numbered strings (thick strings)
+      for (let stringIndex = 0; stringIndex < capo.strings; stringIndex++) {
+        const openNote = currentTuning[stringIndex];
+        const noteAtCapo = (openNote + capo.fret) % 12;
+        
+        capoPositions.push({
+          string: stringIndex,
+          fret: capo.fret,
+          note: noteAtCapo,
+          noteName: MusicTheory.semitoneToNote(noteAtCapo),
+          isCapo: true
+        });
+      }
+    }
 
     return capoPositions;
   }, [capo, includeCapoNotes, viewMode, currentTuning]);
@@ -166,13 +181,14 @@ export const GuitarProvider = ({ children }) => {
         pos.string === positionData.string && pos.fret === positionData.fret
       );
       
-      const newSelection = isSelected 
-        ? prev.filter(pos => !(pos.string === positionData.string && pos.fret === positionData.fret))
-        : [...prev, positionData];
-      
-      // Chord identification will be auto-updated by useEffect
-      
-      return newSelection;
+      if (isSelected) {
+        // Remove the selected note
+        return prev.filter(pos => !(pos.string === positionData.string && pos.fret === positionData.fret));
+      } else {
+        // Remove any existing selection on this string, then add the new one
+        const filteredNotes = prev.filter(pos => pos.string !== positionData.string);
+        return [...filteredNotes, positionData];
+      }
     });
   };
 

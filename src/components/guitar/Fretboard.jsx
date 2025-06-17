@@ -16,11 +16,26 @@ const Fretboard = ({
     verticalFretboard: false,
     darkMode: false,
     layoutSize: "comfortable",
+    leftHanded: false,
   }
 }) => {
   const stringCount = tuning.length;
   const isVertical = settings.verticalFretboard;
   const isCompact = settings.layoutSize === "compact";
+  const isLeftHanded = settings.leftHanded;
+
+  // Helper function to get visual string position
+  const getVisualStringPosition = (logicalString) => {
+    // Default (right-handed): Low E (0) -> High E (5)
+    // Vertical: Low E on left, High E on right
+    // Horizontal: Low E on top, High E on bottom
+    
+    // Left-handed flips the string order
+    if (isLeftHanded) {
+      return stringCount - 1 - logicalString;
+    }
+    return logicalString;
+  };
 
   const fretWidth = isVertical ? (isCompact ? 25 : 30) : isCompact ? 40 : 60;
   const fretHeight = isVertical ? (isCompact ? 40 : 60) : isCompact ? 20 : 30;
@@ -62,16 +77,11 @@ const Fretboard = ({
   const isNoteGreyedOut = (fret, stringIndex) => {
     if (!capo || fret === 0) return false;
 
-    let visualStringIndex;
-    if (isVertical) {
-      visualStringIndex = stringCount - 1 - stringIndex;
-    } else {
-      visualStringIndex = stringIndex;
-    }
-
+    // capo.fromTop means "from the thin strings" (high-numbered logical strings)
+    // stringIndex is the logical string (0 = low E, 5 = high E)
     const isStringCovered = capo.fromTop
-      ? visualStringIndex < capo.strings
-      : visualStringIndex >= stringCount - capo.strings;
+      ? stringIndex >= stringCount - capo.strings  // Cover highest-numbered strings
+      : stringIndex < capo.strings;                 // Cover lowest-numbered strings
     return isStringCovered && fret < capo.fret;
   };
 
@@ -132,7 +142,7 @@ const Fretboard = ({
       }
 
       for (let string = 0; string < stringCount; string++) {
-        const visualString = stringCount - 1 - string;
+        const visualString = getVisualStringPosition(string);
         const x = 50 + visualString * fretWidth;
         elements.push(
           <line
@@ -163,7 +173,8 @@ const Fretboard = ({
       }
 
       for (let string = 0; string < stringCount; string++) {
-        const y = 50 + string * fretHeight;
+        const visualString = getVisualStringPosition(string);
+        const y = 50 + visualString * fretHeight;
         elements.push(
           <line
             key={`string-${string}`}
@@ -309,11 +320,28 @@ const Fretboard = ({
 
     if (isVertical) {
       const y = 50 + (capo.fret - 0.5) * fretHeight;
-      const startVisualString = capo.fromTop ? 0 : stringCount - capo.strings;
-      const endVisualString = capo.fromTop ? capo.strings - 1 : stringCount - 1;
-
-      const startX = 50 + startVisualString * fretWidth;
-      const endX = 50 + endVisualString * fretWidth;
+      
+      // Calculate which logical strings are covered (same logic as horizontal)
+      const coveredStrings = [];
+      if (capo.fromTop) {
+        // Cover highest-numbered strings (thin strings)
+        for (let i = stringCount - capo.strings; i < stringCount; i++) {
+          coveredStrings.push(i);
+        }
+      } else {
+        // Cover lowest-numbered strings (thick strings)
+        for (let i = 0; i < capo.strings; i++) {
+          coveredStrings.push(i);
+        }
+      }
+      
+      // Convert to visual positions and get bounds
+      const visualStrings = coveredStrings.map(s => getVisualStringPosition(s));
+      const minVisualString = Math.min(...visualStrings);
+      const maxVisualString = Math.max(...visualStrings);
+      
+      const startX = 50 + minVisualString * fretWidth;
+      const endX = 50 + maxVisualString * fretWidth;
       const capoWidth = endX - startX + 20;
 
       return (
@@ -343,11 +371,28 @@ const Fretboard = ({
       );
     } else {
       const x = 50 + (capo.fret - 0.5) * fretWidth;
-      const startString = capo.fromTop ? 0 : stringCount - capo.strings;
-      const endString = capo.fromTop ? capo.strings - 1 : stringCount - 1;
-
-      const startY = 50 + startString * fretHeight;
-      const endY = 50 + endString * fretHeight;
+      
+      // Calculate which logical strings are covered
+      const coveredStrings = [];
+      if (capo.fromTop) {
+        // Cover highest-numbered strings (thin strings)
+        for (let i = stringCount - capo.strings; i < stringCount; i++) {
+          coveredStrings.push(i);
+        }
+      } else {
+        // Cover lowest-numbered strings (thick strings)
+        for (let i = 0; i < capo.strings; i++) {
+          coveredStrings.push(i);
+        }
+      }
+      
+      // Convert to visual positions and get bounds
+      const visualStrings = coveredStrings.map(s => getVisualStringPosition(s));
+      const minVisualString = Math.min(...visualStrings);
+      const maxVisualString = Math.max(...visualStrings);
+      
+      const startY = 50 + minVisualString * fretHeight;
+      const endY = 50 + maxVisualString * fretHeight;
       const capoHeight = endY - startY + 20;
 
       return (
@@ -396,12 +441,13 @@ const Fretboard = ({
 
       let x, y;
       if (isVertical) {
-        const visualString = stringCount - 1 - pos.string;
+        const visualString = getVisualStringPosition(pos.string);
         x = 50 + visualString * fretWidth;
         y = 50 + (pos.fret === 0 ? -0.3 : pos.fret - 0.5) * fretHeight;
       } else {
         x = 50 + (pos.fret === 0 ? -0.3 : pos.fret - 0.5) * fretWidth;
-        y = 50 + pos.string * fretHeight;
+        const visualString = getVisualStringPosition(pos.string);
+        y = 50 + visualString * fretHeight;
       }
 
       const noteRadius = isCompact ? 8 : 12;
@@ -472,12 +518,13 @@ const Fretboard = ({
 
       let x, y;
       if (isVertical) {
-        const visualString = stringCount - 1 - stringIndex;
+        const visualString = getVisualStringPosition(stringIndex);
         x = 50 + visualString * fretWidth;
         y = 20;
       } else {
         x = 20;
-        y = 50 + stringIndex * fretHeight;
+        const visualString = getVisualStringPosition(stringIndex);
+        y = 50 + visualString * fretHeight;
       }
 
       return (
@@ -538,8 +585,8 @@ const Fretboard = ({
       >
         {renderFretboard()}
         {renderRecommendedCapoIndicators()}
-        {renderNotes()}
         {renderCapo()}
+        {renderNotes()}
         {renderTuningLabels()}
         {renderFretNumbers()}
       </svg>

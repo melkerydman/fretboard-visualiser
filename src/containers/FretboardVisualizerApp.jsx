@@ -106,6 +106,7 @@ const FretboardVisualizerContent = () => {
     theme: "system",
     verticalFretboard: false,
     layoutSize: "comfortable",
+    leftHanded: false,
   });
 
   // Theme hook

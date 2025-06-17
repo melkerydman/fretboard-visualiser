@@ -12,3 +12,17 @@ export const STRING_LABELS = [
 
 // Fret positions that should have visual markers
 export const FRET_MARKERS = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
+
+// Guitar handedness options
+export const HANDEDNESS_OPTIONS = [
+  {
+    value: false,
+    label: "Right-handed",
+    description: "Standard string order"
+  },
+  {
+    value: true,
+    label: "Left-handed", 
+    description: "Reversed string order"
+  }
+];
