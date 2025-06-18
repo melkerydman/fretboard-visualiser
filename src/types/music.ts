@@ -1,6 +1,7 @@
 // Core music theory types
 
 export type Semitone = number; // 0-11, but allowing math operations
+export type NoteLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
 export type NoteName = 
   | "C" | "C#" | "Db" | "D" | "D#" | "Eb" | "E" | "F" 
   | "F#" | "Gb" | "G" | "G#" | "Ab" | "A" | "A#" | "Bb" | "B"
@@ -61,4 +62,11 @@ export interface ChordFormula {
 
 export interface ScaleFormula {
   [key: string]: number[];
+}
+
+export interface ScaleWithNames {
+  root: Semitone;
+  rootName: NoteName;
+  type: ScaleType;
+  notes: ScaleNote[];
 }
