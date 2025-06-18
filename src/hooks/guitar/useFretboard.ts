@@ -1,7 +1,19 @@
 import { useMemo } from 'react';
-import MusicTheory from '../../services/musicTheory.js';
+import MusicTheory from '../../services/musicTheory';
+import type { Tuning, Capo, Semitone, NotePosition } from '../../types';
 
-export const useGuitarCalculations = (tuning, capo, maxFrets) => {
+interface UseFretboardReturn {
+  effectiveTuning: Tuning;
+  notePositions: NotePosition[];
+  getHighlightedPositions: (highlightedNotes: Semitone[]) => NotePosition[];
+  isNoteGreyed: (stringIndex: number, fret: number) => boolean;
+}
+
+export const useFretboard = (
+  tuning: Tuning, 
+  capo: Capo | null, 
+  maxFrets: number
+): UseFretboardReturn => {
   // Calculate effective tuning considering capo
   const effectiveTuning = useMemo(() => {
     if (!capo) return tuning;
@@ -17,7 +29,7 @@ export const useGuitarCalculations = (tuning, capo, maxFrets) => {
 
   // Find all note positions on the fretboard
   const notePositions = useMemo(() => {
-    const positions = [];
+    const positions: NotePosition[] = [];
     
     for (let stringIndex = 0; stringIndex < tuning.length; stringIndex++) {
       for (let fret = 0; fret <= maxFrets; fret++) {
@@ -26,7 +38,6 @@ export const useGuitarCalculations = (tuning, capo, maxFrets) => {
           string: stringIndex,
           fret,
           note,
-          semitone: note,
           noteName: MusicTheory.semitoneToNote(note),
         });
       }
@@ -36,12 +47,12 @@ export const useGuitarCalculations = (tuning, capo, maxFrets) => {
   }, [tuning, maxFrets]);
 
   // Filter positions for highlighted notes
-  const getHighlightedPositions = (highlightedNotes) => {
+  const getHighlightedPositions = (highlightedNotes: Semitone[]) => {
     return notePositions.filter(pos => highlightedNotes.includes(pos.note));
   };
 
   // Check if a note position is greyed out due to capo
-  const isNoteGreyed = (stringIndex, fret) => {
+  const isNoteGreyed = (stringIndex: number, fret: number) => {
     if (!capo) return false;
     
     const isCapoedString = capo.fromTop 

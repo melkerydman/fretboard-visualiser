@@ -1,15 +1,34 @@
 import { useMemo } from 'react';
-import MusicTheory from '../../services/musicTheory.js';
+import MusicTheory from '../../services/musicTheory';
+import type { NoteName, ChordType, ScaleType, Semitone } from '../../types';
 
-export const useMusicTheory = () => {
+interface ScaleChord {
+  root: NoteName;
+  rootSemitone: Semitone;
+  degree: number;
+  notes: Semitone[];
+}
+
+interface UseMusicTheoryReturn {
+  chordTypes: ChordType[];
+  scaleTypes: ScaleType[];
+  availableNotes: readonly NoteName[];
+  generateChordNotes: (root: NoteName | Semitone, chordType: ChordType) => Semitone[];
+  generateScaleNotes: (root: NoteName | Semitone, scaleType: ScaleType) => Semitone[];
+  generateScaleChords: (root: NoteName | Semitone, scaleType: ScaleType) => ScaleChord[];
+  semitoneToNote: (semitone: Semitone) => NoteName;
+  noteToSemitone: (noteName: NoteName) => Semitone;
+}
+
+export const useMusicTheory = (): UseMusicTheoryReturn => {
   // Get available chord types
   const chordTypes = useMemo(() => {
-    return Object.keys(MusicTheory.CHORD_FORMULAS);
+    return Object.keys(MusicTheory.CHORD_FORMULAS) as ChordType[];
   }, []);
 
   // Get available scale types
   const scaleTypes = useMemo(() => {
-    return Object.keys(MusicTheory.SCALE_FORMULAS);
+    return Object.keys(MusicTheory.SCALE_FORMULAS) as ScaleType[];
   }, []);
 
   // Get available notes
@@ -18,24 +37,24 @@ export const useMusicTheory = () => {
   }, []);
 
   // Generate chord notes
-  const generateChordNotes = (root, chordType) => {
+  const generateChordNotes = (root: NoteName | Semitone, chordType: ChordType) => {
     return MusicTheory.generateChord(root, chordType);
   };
 
   // Generate scale notes
-  const generateScaleNotes = (root, scaleType) => {
+  const generateScaleNotes = (root: NoteName | Semitone, scaleType: ScaleType) => {
     return MusicTheory.generateScale(root, scaleType);
   };
 
   // Generate scale chords (chords within a scale)
-  const generateScaleChords = (root, scaleType) => {
+  const generateScaleChords = (root: NoteName | Semitone, scaleType: ScaleType): ScaleChord[] => {
     const scaleNotes = MusicTheory.generateScale(root, scaleType);
-    const chords = [];
+    const chords: ScaleChord[] = [];
     
     // Generate triads for each scale degree
     scaleNotes.forEach((note, index) => {
       const noteName = MusicTheory.semitoneToNote(note);
-      const chord = {
+      const chord: ScaleChord = {
         root: noteName,
         rootSemitone: note,
         degree: index + 1,
@@ -52,12 +71,12 @@ export const useMusicTheory = () => {
   };
 
   // Convert semitone to note name
-  const semitoneToNote = (semitone) => {
+  const semitoneToNote = (semitone: Semitone) => {
     return MusicTheory.semitoneToNote(semitone);
   };
 
   // Convert note name to semitone
-  const noteToSemitone = (noteName) => {
+  const noteToSemitone = (noteName: NoteName) => {
     return MusicTheory.noteToSemitone(noteName);
   };
 

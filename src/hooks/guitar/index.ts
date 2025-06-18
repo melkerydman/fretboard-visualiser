@@ -1,0 +1,1 @@
+export { useFretboard } from './useFretboard';

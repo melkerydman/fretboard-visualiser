@@ -1,10 +1,46 @@
 import { useState, useEffect } from "react";
 
+type ThemeMode = "system" | "light" | "dark";
+
+interface ThemeClasses {
+  bg: string;
+  cardBg: string;
+  border: string;
+  text: string;
+  textSecondary: string;
+  textTertiary: string;
+  input: string;
+  button: string;
+}
+
+interface FretboardTheme {
+  fretboard: string;
+  fret: string;
+  nutFret: string;
+  string: string;
+  fretMarker: string;
+  note: string;
+  noteStroke: string;
+  greyedNote: string;
+  greyedStroke: string;
+  capo: string;
+  text: string;
+}
+
+interface UseThemeReturn {
+  theme: ThemeMode;
+  darkMode: boolean;
+  systemDarkMode: boolean;
+  setTheme: (theme: ThemeMode) => void;
+  themeClasses: ThemeClasses;
+  fretboardTheme: FretboardTheme;
+}
+
 /**
  * Custom hook for managing theme state and system dark mode detection
  * Handles system preference detection, theme state management, and computed theme values
  */
-export const useTheme = (initialTheme = "system") => {
+export const useTheme = (initialTheme: ThemeMode = "system"): UseThemeReturn => {
   // System dark mode detection state
   const [systemDarkMode, setSystemDarkMode] = useState(
     typeof window !== "undefined" &&
@@ -22,7 +58,7 @@ export const useTheme = (initialTheme = "system") => {
   useEffect(() => {
     if (typeof window !== "undefined" && window.matchMedia) {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      const handleChange = (e) => setSystemDarkMode(e.matches);
+      const handleChange = (e: MediaQueryListEvent) => setSystemDarkMode(e.matches);
 
       if (mediaQuery.addEventListener) {
         mediaQuery.addEventListener("change", handleChange);
