@@ -1,6 +1,6 @@
 // Core music theory types
 
-import { NOTE_NAMES, CHORD_TYPES, SCALE_TYPES } from '../constants/musicTheory';
+import { NOTE_NAMES, CHORD_TYPES, SCALE_TYPES } from '../constants/music';
 
 export type Semitone = number; // 0-11, but allowing math operations
 export type NoteLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';

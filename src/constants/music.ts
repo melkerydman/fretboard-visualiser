@@ -1,4 +1,4 @@
-// Music theory constants for better IntelliSense and type safety
+// Pure music theory constants - notes, chords, and scales
 
 export const NOTE_NAMES = [
   "C", "C#", "Db", "D", "D#", "Eb", "E", "F", 
