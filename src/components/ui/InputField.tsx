@@ -54,6 +54,8 @@ const InputField = ({
             value={value}
             onChange={(e) => onChange(parseInt(e.target.value) || 0)}
             className={`w-full p-2 rounded border ${themeClasses.input}`}
+            min={min}
+            max={max}
             {...rest}
           />
         );
