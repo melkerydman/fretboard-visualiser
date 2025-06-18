@@ -1,10 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import "./app.css";
-import { GuitarProvider, useGuitar } from "./context/index.js";
-import { MusicalContextProvider } from "./context/MusicalContext.jsx";
-import { useMusicTheory } from "./hooks/music/index.js";
+import { GuitarProvider, useGuitar, MusicalContextProvider, useMusicalContext } from "./context";
 import { useTheme } from "./hooks/ui/useTheme.js";
-import { useMusicalContext } from "./context/MusicalContext.jsx";
 import { Fretboard } from "./components/guitar/index.js";
 import { SettingsModal } from "./components/ui/modals/index.js";
 import { SettingsIcon } from "./components/ui/icons/index.js";
@@ -21,8 +18,6 @@ const AppContent = () => {
     selectedScale,
     viewMode,
     selectedScaleChord,
-    selectedTuning,
-    customTuning,
     capo,
     maxFrets,
     hoveredNote,
@@ -36,13 +31,7 @@ const AppContent = () => {
     highlightedNotes,
     recommendedCapoPositions,
     // Actions
-    setSelectedRoot,
-    setSelectedChord,
-    setSelectedScale,
-    setSelectedTuning,
-    setCustomTuning,
     setCapo,
-    setMaxFrets,
     setHoveredNote,
     addCapo,
     removeCapo,
@@ -72,8 +61,8 @@ const AppContent = () => {
   // Theme hook
   const { themeClasses, darkMode, theme, setTheme } = useTheme(settings.theme);
 
-  // Music theory hook
-  const { chordTypes, scaleTypes, availableNotes } = useMusicTheory();
+  // Music theory hook (only used in this component now)
+  // MainControls gets this data from its own useMusicTheory hook
 
   // Update settings with computed dark mode and sync theme
   useEffect(() => {
@@ -145,24 +134,8 @@ const AppContent = () => {
 
       {/* Controls */}
       <MainControls
-        viewMode={viewMode}
-        selectedRoot={selectedRoot}
-        selectedChord={selectedChord}
-        selectedScale={selectedScale}
-        selectedTuning={selectedTuning}
-        customTuning={customTuning}
-        maxFrets={maxFrets}
-        availableNotes={availableNotes}
-        chordTypes={chordTypes}
-        scaleTypes={scaleTypes}
         settings={settings}
         themeClasses={themeClasses}
-        onRootChange={setSelectedRoot}
-        onChordChange={setSelectedChord}
-        onScaleChange={setSelectedScale}
-        onTuningChange={setSelectedTuning}
-        onCustomTuningChange={setCustomTuning}
-        onMaxFretsChange={setMaxFrets}
       />
 
       {/* Chord Identifier Controls */}
