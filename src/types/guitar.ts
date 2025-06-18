@@ -17,7 +17,6 @@ export interface NotePosition {
   fret: FretNumber;
   note: Semitone;
   noteName: NoteName;
-  isCapo?: boolean;
 }
 
 export interface RecommendedCapoPosition {
@@ -26,16 +25,6 @@ export interface RecommendedCapoPosition {
   score: number;
 }
 
-export interface GuitarSettings {
-  theme: 'light' | 'dark' | 'system';
-  verticalFretboard: boolean;
-  layoutSize: 'compact' | 'comfortable' | 'spacious';
-  leftHanded: boolean;
-  darkMode?: boolean; // Computed from theme
-}
-
 export interface TuningDefinitions {
   [key: string]: Tuning;
 }
-
-export type ViewMode = 'chord' | 'scale' | 'identifier';

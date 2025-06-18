@@ -1,31 +1,5 @@
 import { useState, useEffect } from "react";
-
-type ThemeMode = "system" | "light" | "dark";
-
-interface ThemeClasses {
-  bg: string;
-  cardBg: string;
-  border: string;
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  input: string;
-  button: string;
-}
-
-interface FretboardTheme {
-  fretboard: string;
-  fret: string;
-  nutFret: string;
-  string: string;
-  fretMarker: string;
-  note: string;
-  noteStroke: string;
-  greyedNote: string;
-  greyedStroke: string;
-  capo: string;
-  text: string;
-}
+import type { ThemeMode, ThemeClasses, FretboardTheme } from '../../types';
 
 interface UseThemeReturn {
   theme: ThemeMode;
