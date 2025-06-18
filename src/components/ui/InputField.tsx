@@ -1,4 +1,5 @@
 import { ThemeClasses } from '../../types/ui';
+import { useThemeContext } from '../../context';
 
 interface Option {
   value: string | number;
@@ -13,7 +14,7 @@ interface InputFieldProps {
   options?: Option[];
   min?: number;
   max?: number;
-  themeClasses: Pick<ThemeClasses, 'text' | 'input'>;
+  themeClasses?: Pick<ThemeClasses, 'text' | 'input'>;
 }
 
 const InputField = ({ 
@@ -24,9 +25,11 @@ const InputField = ({
   options = [],
   min,
   max,
-  themeClasses,
+  themeClasses: propThemeClasses,
   ...rest
 }: InputFieldProps) => {
+  const { themeClasses: contextThemeClasses } = useThemeContext();
+  const themeClasses = propThemeClasses || { text: contextThemeClasses.text, input: contextThemeClasses.input };
   const renderInput = () => {
     switch (type) {
       case "select":

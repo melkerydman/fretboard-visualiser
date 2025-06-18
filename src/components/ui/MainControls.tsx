@@ -1,18 +1,14 @@
 import MusicTheory from "../../services/musicTheory.js";
 import InputField from "./InputField";
 import CustomTuningSelector from "./CustomTuningSelector";
-import { ThemeClasses, UISettings } from "../../types/ui";
 import { NoteName, ChordType, ScaleType } from "../../types/music";
 import { TuningName } from "../../types/guitar";
-import { useGuitar } from "../../context";
+import { useGuitar, useThemeContext } from "../../context";
 import { useMusicTheory } from "../../hooks/music/index.js";
 
-interface MainControlsProps {
-  settings: UISettings;
-  themeClasses: Pick<ThemeClasses, 'text' | 'input'>;
-}
-
-const MainControls = ({ settings, themeClasses }: MainControlsProps) => {
+const MainControls = () => {
+  // Get contexts (settings not needed as components use theme context directly)
+  const { themeClasses } = useThemeContext();
   // Get guitar state and actions from context
   const {
     viewMode,
@@ -50,7 +46,6 @@ const MainControls = ({ settings, themeClasses }: MainControlsProps) => {
         value={selectedRoot}
         onChange={(value) => setSelectedRoot(value as NoteName)}
         options={rootNoteOptions}
-        themeClasses={themeClasses}
       />
 
       {viewMode === "chord" ? (
@@ -87,7 +82,6 @@ const MainControls = ({ settings, themeClasses }: MainControlsProps) => {
             <CustomTuningSelector
               tuning={customTuning}
               onChange={setCustomTuning}
-              settings={settings}
             />
           </div>
         )}

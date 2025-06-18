@@ -1,16 +1,12 @@
-import { ViewMode, ThemeClasses } from '../../types/ui';
+import { useGuitar, useThemeContext } from '../../context';
 
-interface ModeSelectorProps {
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
-  themeClasses: Pick<ThemeClasses, 'cardBg' | 'border' | 'text'>;
-}
-
-const ModeSelector = ({ viewMode, onViewModeChange, themeClasses }: ModeSelectorProps) => {
+const ModeSelector = () => {
+  const { viewMode, handleViewModeChange } = useGuitar();
+  const { themeClasses } = useThemeContext();
   return (
     <div className="flex space-x-2">
       <button
-        onClick={() => onViewModeChange("chord")}
+        onClick={() => handleViewModeChange("chord")}
         className={`px-4 py-2 rounded font-medium transition-colors border ${
           viewMode === "chord"
             ? "bg-blue-500 text-white border-blue-500"
@@ -20,7 +16,7 @@ const ModeSelector = ({ viewMode, onViewModeChange, themeClasses }: ModeSelector
         Chord Mode
       </button>
       <button
-        onClick={() => onViewModeChange("scale")}
+        onClick={() => handleViewModeChange("scale")}
         className={`px-4 py-2 rounded font-medium transition-colors border ${
           viewMode === "scale"
             ? "bg-blue-500 text-white border-blue-500"
@@ -30,7 +26,7 @@ const ModeSelector = ({ viewMode, onViewModeChange, themeClasses }: ModeSelector
         Scale Mode
       </button>
       <button
-        onClick={() => onViewModeChange("identifier")}
+        onClick={() => handleViewModeChange("identifier")}
         className={`px-4 py-2 rounded font-medium transition-colors border ${
           viewMode === "identifier"
             ? "bg-blue-500 text-white border-blue-500"

@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import "./app.css";
-import { GuitarProvider, useGuitar, MusicalContextProvider, useMusicalContext } from "./context";
-import { useTheme } from "./hooks/ui/useTheme.js";
+import { GuitarProvider, useGuitar, MusicalContextProvider, useMusicalContext, SettingsProvider, useSettings, ThemeProvider, useThemeContext } from "./context";
 import { Fretboard } from "./components/guitar/index.js";
 import { SettingsModal } from "./components/ui/modals/index.js";
 import { SettingsIcon } from "./components/ui/icons/index.js";
@@ -49,32 +48,14 @@ const AppContent = () => {
   // Musical context for smart note naming
   const { getNoteName, formatNoteNames } = useMusicalContext();
 
-  // UI State (separate from guitar context)
+  // UI State
   const [showSettings, setShowSettings] = useState(false);
-  const [settings, setSettings] = useState({
-    theme: "system",
-    verticalFretboard: false,
-    layoutSize: "comfortable",
-    leftHanded: false,
-  });
-
-  // Theme hook
-  const { themeClasses, darkMode, theme, setTheme } = useTheme(settings.theme);
+  const { settings, updateSettings } = useSettings();
+  const { themeClasses } = useThemeContext();
 
   // Music theory hook (only used in this component now)
   // MainControls gets this data from its own useMusicTheory hook
 
-  // Update settings with computed dark mode and sync theme
-  useEffect(() => {
-    setSettings((prev) => ({ ...prev, darkMode, theme }));
-  }, [darkMode, theme]);
-
-  // Sync theme changes from settings to hook
-  useEffect(() => {
-    if (settings.theme !== theme) {
-      setTheme(settings.theme);
-    }
-  }, [settings.theme, theme, setTheme]);
 
   // Computed scale chords for scale view
   const scaleChords = useMemo(() => {
@@ -119,24 +100,17 @@ const AppContent = () => {
   };
 
   const handleSettingsChange = (newSettings) => {
-    setSettings(newSettings);
+    updateSettings(newSettings);
   };
 
   // Render dashboard content (controls, status, scale chords, capo controls)
   const renderDashboard = () => (
     <>
       {/* Mode Selection */}
-      <ModeSelector
-        viewMode={viewMode}
-        onViewModeChange={handleViewModeChange}
-        themeClasses={themeClasses}
-      />
+      <ModeSelector />
 
       {/* Controls */}
-      <MainControls
-        settings={settings}
-        themeClasses={themeClasses}
-      />
+      <MainControls />
 
       {/* Chord Identifier Controls */}
       {viewMode === "identifier" && (
@@ -466,11 +440,15 @@ const AppContent = () => {
 // Main App Container with Providers
 function App() {
   return (
-    <GuitarProvider>
-      <MusicalContextProvider>
-        <AppContent />
-      </MusicalContextProvider>
-    </GuitarProvider>
+    <SettingsProvider>
+      <ThemeProvider>
+        <GuitarProvider>
+          <MusicalContextProvider>
+            <AppContent />
+          </MusicalContextProvider>
+        </GuitarProvider>
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }
 

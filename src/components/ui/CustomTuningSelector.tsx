@@ -1,31 +1,24 @@
-import { useMusicalContext } from "../../context/MusicalContext.jsx";
 import MusicTheory from "../../services/musicTheory.js";
 import { STRING_LABELS } from "../../constants/index.js";
 import InputField from "./InputField";
-import { ThemeClasses, UISettings } from "../../types/ui";
 import { Tuning } from "../../types/guitar";
 import { Semitone } from "../../types/music";
+import { useMusicalContext, useThemeContext } from "../../context";
 
 interface CustomTuningSelectorProps {
   tuning: Tuning;
   onChange: (tuning: Tuning) => void;
-  settings: UISettings;
 }
 
-const CustomTuningSelector = ({ tuning, onChange, settings }: CustomTuningSelectorProps) => {
+const CustomTuningSelector = ({ tuning, onChange }: CustomTuningSelectorProps) => {
   const { getNoteName } = useMusicalContext();
+  const { themeClasses } = useThemeContext();
   
   const noteOptions = MusicTheory.NOTES.map((_, noteIndex) => ({
     value: noteIndex,
     label: getNoteName(noteIndex)
   }));
 
-  const themeClasses: Pick<ThemeClasses, 'text' | 'input'> = {
-    text: settings.darkMode ? "text-gray-200" : "text-gray-700",
-    input: settings.darkMode
-      ? "bg-gray-700 border-gray-600 text-white"
-      : "bg-white border-gray-300 text-gray-900"
-  };
 
   const handleStringChange = (stringIndex: number, value: string | number) => {
     const newTuning = [...tuning];
@@ -49,7 +42,7 @@ const CustomTuningSelector = ({ tuning, onChange, settings }: CustomTuningSelect
               onChange={(value) => handleStringChange(index, value)}
               options={noteOptions}
               themeClasses={{
-                ...themeClasses,
+                text: themeClasses.text,
                 input: `${themeClasses.input} p-1 text-sm`
               }}
             />
