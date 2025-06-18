@@ -3,7 +3,7 @@ import { STRING_LABELS } from "../../constants/index.js";
 import InputField from "./InputField";
 import { Tuning } from "../../types/guitar";
 import { Semitone } from "../../types/music";
-import { useMusicalContext, useThemeContext } from "../../context";
+import { useMusicalContext, useTheme } from "../../context";
 
 interface CustomTuningSelectorProps {
   tuning: Tuning;
@@ -12,7 +12,7 @@ interface CustomTuningSelectorProps {
 
 const CustomTuningSelector = ({ tuning, onChange }: CustomTuningSelectorProps) => {
   const { getNoteName } = useMusicalContext();
-  const { themeClasses } = useThemeContext();
+  const { themeClasses } = useTheme();
   
   const noteOptions = MusicTheory.NOTES.map((_, noteIndex) => ({
     value: noteIndex,

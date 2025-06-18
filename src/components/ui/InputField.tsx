@@ -1,5 +1,5 @@
 import { ThemeClasses } from '../../types/ui';
-import { useThemeContext } from '../../context';
+import { useTheme } from '../../context';
 
 interface Option {
   value: string | number;
@@ -28,7 +28,7 @@ const InputField = ({
   themeClasses: propThemeClasses,
   ...rest
 }: InputFieldProps) => {
-  const { themeClasses: contextThemeClasses } = useThemeContext();
+  const { themeClasses: contextThemeClasses } = useTheme();
   const themeClasses = propThemeClasses || { text: contextThemeClasses.text, input: contextThemeClasses.input };
   const renderInput = () => {
     switch (type) {

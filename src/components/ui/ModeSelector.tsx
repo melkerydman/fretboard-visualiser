@@ -1,8 +1,8 @@
-import { useGuitar, useThemeContext } from '../../context';
+import { useGuitar, useTheme } from '../../context';
 
 const ModeSelector = () => {
   const { viewMode, handleViewModeChange } = useGuitar();
-  const { themeClasses } = useThemeContext();
+  const { themeClasses } = useTheme();
   return (
     <div className="flex space-x-2">
       <button

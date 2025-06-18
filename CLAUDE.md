@@ -17,20 +17,24 @@ This is a single-page React application for guitar chord and scale visualization
 ### Current Architecture Status
 
 **Main Application Flow:**
-- `src/main.jsx` → `src/App.jsx` → `src/containers/FretboardVisualizerApp.jsx` (669 lines)
-- **Modular architecture** with clear separation of concerns (no longer single-file!)
-- Context providers for comprehensive state management
+- `src/main.jsx` → `src/App.jsx` → `AppContent` component
+- **Fully consolidated architecture** - all app logic directly in App.jsx (no container layer)
+- Context providers for comprehensive state management with **no prop drilling**
 - **Mixed TypeScript/JavaScript codebase** (TypeScript conversion in progress)
 
 ### Directory Structure
 
 ```
 src/
-├── components/          # UI Components (JSX)
+├── components/          # UI Components (TypeScript/JSX)
 │   ├── guitar/         # Guitar-specific components
 │   │   ├── Fretboard.jsx (interactive SVG fretboard)
 │   │   └── index.js
-│   └── ui/            # Reusable UI components
+│   └── ui/            # Reusable UI components (TypeScript)
+│       ├── InputField.tsx (unified form component)
+│       ├── ModeSelector.tsx (view mode selection)
+│       ├── MainControls.tsx (form controls)
+│       ├── CustomTuningSelector.tsx (tuning controls)
 │       ├── icons/     # Icon components
 │       └── modals/    # Modal components
 ├── constants/          # TypeScript Constants
@@ -38,12 +42,12 @@ src/
 │   ├── music.ts       # Music theory constants
 │   ├── ui.ts          # UI/theme constants
 │   └── index.ts       # Barrel exports
-├── containers/         # Container Components (JSX)
-│   └── FretboardVisualizerApp.jsx (main app logic)
 ├── context/           # React Context (TypeScript)
-│   ├── GuitarContext.tsx
-│   ├── MusicalContext.tsx
-│   └── index.js
+│   ├── GuitarContext.tsx (guitar state & actions)
+│   ├── MusicalContext.tsx (note naming & theory)
+│   ├── SettingsContext.tsx (UI settings)
+│   ├── ThemeContext.tsx (theme & styling)
+│   └── index.ts (barrel exports)
 ├── hooks/             # Custom Hooks (TypeScript)
 │   ├── guitar/        # Guitar-related hooks
 │   ├── music/         # Music theory hooks
@@ -82,6 +86,9 @@ src/
 **1. Context-Based State Management:**
 - `GuitarContext`: Guitar state, fretboard logic, capo management
 - `MusicalContext`: Note naming, key signatures, music theory
+- `SettingsContext`: UI settings (theme, layout, preferences)
+- `ThemeContext`: Theme computation and styling (replaces useTheme hook)
+- **Zero prop drilling** - all components access contexts directly
 - No external state management library needed
 
 **2. MusicTheory Service (TypeScript):**
@@ -99,10 +106,11 @@ src/
 - Responsive sizing based on layout preferences
 
 **4. Theme and Settings System:**
-- Dark/light/system theme detection via useTheme hook
+- Dark/light/system theme detection via `useTheme` context hook
 - Multiple layout sizes (compact/comfortable/spacious)
-- Persistent user preferences
+- Persistent user preferences via `useSettings` context hook
 - Dynamic theme switching with context-aware styling
+- **All theme logic consolidated in ThemeContext** (no separate useTheme hook file)
 
 ### Code Organization Patterns
 
@@ -164,20 +172,19 @@ src/
 
 ## Current Development Status
 
-**Active Refactoring in Progress:**
+**Recently Completed:**
 - ✅ Consolidated GuitarVisualizerApp code directly into App.jsx (eliminated container layer)
 - ✅ Removed containers directory
-- Currently extracting large components into separate files for better maintainability
-- Converting remaining JavaScript components to TypeScript
-- Creating shared type interfaces for component props and state
+- ✅ Extracted components to separate TypeScript files (ModeSelector, MainControls, CustomTuningSelector, InputField)
+- ✅ Converted extracted components to TypeScript with proper typing
+- ✅ **Eliminated all prop drilling** - created SettingsContext and ThemeContext
+- ✅ Consolidated useTheme hook into ThemeContext for cleaner architecture
 
 **Next Steps:**
-1. ✅ Consolidate App.jsx with GuitarVisualizerApp content
-2. ✅ Extract components to separate files (ModeSelector, MainControls, CustomTuningSelector)
-3. 🔄 Continue extracting remaining large components (ChordIdentifier, StatusPanel, CapoControls)
-4. Complete TypeScript conversion of extracted components
-5. Create comprehensive shared types file
-6. **TODO: Refactor InputField to be properly polymorphic** - currently uses non-elegant interface approach for min/max props
+1. 🔄 Continue extracting remaining large components (ChordIdentifier, StatusPanel, CapoControls)
+2. Complete TypeScript conversion of remaining components (Fretboard, etc.)
+3. Create comprehensive shared types file
+4. **TODO: Refactor InputField to be properly polymorphic** - currently uses non-elegant interface approach for min/max props
 
 ## Claude Code Instructions
 

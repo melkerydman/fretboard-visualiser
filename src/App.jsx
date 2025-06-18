@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import "./app.css";
-import { GuitarProvider, useGuitar, MusicalContextProvider, useMusicalContext, SettingsProvider, useSettings, ThemeProvider, useThemeContext } from "./context";
+import { GuitarProvider, useGuitar, MusicalContextProvider, useMusicalContext, SettingsProvider, useSettings, ThemeProvider, useTheme } from "./context";
 import { Fretboard } from "./components/guitar/index.js";
 import { SettingsModal } from "./components/ui/modals/index.js";
 import { SettingsIcon } from "./components/ui/icons/index.js";
@@ -51,7 +51,7 @@ const AppContent = () => {
   // UI State
   const [showSettings, setShowSettings] = useState(false);
   const { settings, updateSettings } = useSettings();
-  const { themeClasses } = useThemeContext();
+  const { themeClasses } = useTheme();
 
   // Music theory hook (only used in this component now)
   // MainControls gets this data from its own useMusicTheory hook

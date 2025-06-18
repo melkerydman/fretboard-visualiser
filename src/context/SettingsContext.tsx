@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { UISettings } from '../types/ui';
 
 interface SettingsContextType {
@@ -22,9 +22,9 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
     darkMode: false,
   });
 
-  const updateSettings = (newSettings: Partial<UISettings>) => {
+  const updateSettings = useCallback((newSettings: Partial<UISettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
-  };
+  }, []);
 
   return (
     <SettingsContext.Provider value={{ settings, setSettings, updateSettings }}>
