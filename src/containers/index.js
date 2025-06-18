@@ -1,1 +1,0 @@
-export { default as FretboardVisualizerApp } from './FretboardVisualizerApp.jsx';
