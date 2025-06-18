@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./app.css";
+import "@/app.css";
 import {
   GuitarProvider,
   useGuitar,
@@ -8,16 +8,16 @@ import {
   useSettings,
   ThemeProvider,
   useTheme,
-} from "./context";
-import { Fretboard } from "./components/guitar/index.js";
-import { SettingsModal } from "./components/ui/modals/index.js";
-import { SettingsIcon } from "./components/ui/icons/index.js";
-import ModeSelector from "./components/ui/ModeSelector";
-import MainControls from "./components/ui/MainControls";
-import ChordIdentifier from "./components/ui/ChordIdentifier";
-import ScaleChords from "./components/ui/ScaleChords";
-import StatusPanel from "./components/ui/StatusPanel";
-import CapoControls from "./components/ui/CapoControls";
+} from "@/context";
+import { Fretboard } from "@/components/guitar/index.js";
+import { SettingsModal } from "@/components/ui/modals/index.js";
+import { SettingsIcon } from "@/components/ui/icons/index.js";
+import ModeSelector from "@/components/ui/ModeSelector";
+import MainControls from "@/components/ui/MainControls";
+import ChordIdentifier from "@/components/ui/ChordIdentifier";
+import ScaleChords from "@/components/ui/ScaleChords";
+import StatusPanel from "@/components/ui/StatusPanel";
+import CapoControls from "@/components/ui/CapoControls";
 
 // Main App Content (uses context)
 const AppContent = () => {

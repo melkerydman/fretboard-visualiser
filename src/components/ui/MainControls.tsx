@@ -1,10 +1,10 @@
-import MusicTheory from "../../services/musicTheory.js";
+import MusicTheory from "@/services/musicTheory.js";
 import InputField from "./InputField";
 import CustomTuningSelector from "./CustomTuningSelector";
-import { NoteName, ChordType, ScaleType } from "../../types/music";
-import { TuningName } from "../../types/guitar";
-import { useGuitar, useTheme } from "../../context";
-import { useMusicTheory } from "../../hooks/music/index.js";
+import { NoteName, ChordType, ScaleType } from "@/types/music";
+import { TuningName } from "@/types/guitar";
+import { useGuitar, useTheme } from "@/context";
+import { useMusicTheory } from "@/hooks/music/index.js";
 
 const MainControls = () => {
   // Get contexts (settings not needed as components use theme context directly)

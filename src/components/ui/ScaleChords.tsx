@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useGuitar, useMusicalContext, useTheme } from '../../context';
-import MusicTheory from '../../services/musicTheory.js';
-import { Chord, ScaleChordGroup, NoteName } from '../../types/music';
+import { useGuitar, useMusicalContext, useTheme } from '@/context';
+import MusicTheory from '@/services/musicTheory.js';
+import { Chord, ScaleChordGroup, NoteName } from '@/types/music';
 
 const ScaleChords = () => {
   const {

@@ -158,6 +158,7 @@ src/
 - Strict mode enabled with comprehensive type checking
 - ES2020 target with modern module resolution
 - Path mapping and barrel exports for clean imports
+- **@ alias** configured to map to `/src` for cleaner imports
 
 **ESLint Configuration:**
 - Modern flat config format
@@ -168,7 +169,7 @@ src/
 **Build Configuration:**
 - Standard Vite React + TypeScript setup
 - Tailwind v4 with `@tailwindcss/vite` plugin
-- No custom build optimizations or aliases configured
+- **@ alias** configured for `/src` directory imports
 
 ## Current Development Status
 
