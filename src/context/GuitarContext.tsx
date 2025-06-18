@@ -35,7 +35,7 @@ interface GuitarContextValue {
   maxFrets: number;
 
   // UI State
-  hoveredNote: Semitone | null;
+  hoveredNote: NotePosition | null;
 
   // Computed Values
   currentTuning: Tuning;
@@ -52,14 +52,14 @@ interface GuitarContextValue {
   setCustomTuning: (tuning: Tuning) => void;
   setCapo: (capo: Capo | null) => void;
   setMaxFrets: (frets: number) => void;
-  setHoveredNote: (note: Semitone | null) => void;
+  setHoveredNote: (note: NotePosition | null) => void;
 
   // Complex Actions
   addCapo: () => void;
   removeCapo: () => void;
   updateCapoStrings: (strings: number) => void;
   toggleCapoDirection: () => void;
-  handleScaleChordSelect: (chord: Chord) => void;
+  handleScaleChordSelect: (chord: Chord | null) => void;
   handleViewModeChange: (mode: ViewMode) => void;
   toggleNoteSelection: (positionData: NotePosition) => void;
   clearSelectedNotes: () => void;
@@ -95,7 +95,7 @@ export const GuitarProvider = ({ children }: GuitarProviderProps) => {
   const [maxFrets, setMaxFrets] = useState(12);
 
   // UI State
-  const [hoveredNote, setHoveredNote] = useState<Semitone | null>(null);
+  const [hoveredNote, setHoveredNote] = useState<NotePosition | null>(null);
 
   // Computed Values
   const currentTuning = useMemo(() => {
@@ -156,6 +156,7 @@ export const GuitarProvider = ({ children }: GuitarProviderProps) => {
           fret: capo.fret,
           note: noteAtCapo,
           noteName: MusicTheory.getContextualNoteName(noteAtCapo, musicalContext),
+          isCapo: true,
         });
       }
     } else {
@@ -224,7 +225,7 @@ export const GuitarProvider = ({ children }: GuitarProviderProps) => {
     setCapo(prev => prev ? { ...prev, fromTop: !prev.fromTop } : null);
   };
 
-  const handleScaleChordSelect = (chord: Chord) => {
+  const handleScaleChordSelect = (chord: Chord | null) => {
     setSelectedScaleChord(chord);
   };
 

@@ -63,3 +63,10 @@ export interface ScaleWithNames {
   type: ScaleType;
   notes: ScaleNote[];
 }
+
+export interface ScaleChordGroup {
+  root: NoteName;
+  rootSemitone: Semitone;
+  degree: number;
+  chords: Chord[];
+}

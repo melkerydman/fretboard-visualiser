@@ -18,6 +18,7 @@ export interface NotePosition {
   fret: FretNumber;
   note: Semitone;
   noteName: NoteName;
+  isCapo?: boolean;
 }
 
 export interface RecommendedCapoPosition {
