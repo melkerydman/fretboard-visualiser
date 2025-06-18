@@ -3,9 +3,7 @@ import InputField from "./InputField";
 import CustomTuningSelector from "./CustomTuningSelector";
 import { ViewMode, ThemeClasses, UISettings } from "../../types/ui";
 import { NoteName, ChordType, ScaleType } from "../../types/music";
-import { Tuning, FretNumber } from "../../types/guitar";
-
-type TuningName = keyof typeof MusicTheory.TUNINGS | "Custom";
+import { Tuning, FretNumber, TuningName } from "../../types/guitar";
 
 interface MainControlsProps {
   viewMode: ViewMode;

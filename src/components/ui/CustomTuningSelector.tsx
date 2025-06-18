@@ -3,10 +3,12 @@ import MusicTheory from "../../services/musicTheory.js";
 import { STRING_LABELS } from "../../constants/index.js";
 import InputField from "./InputField";
 import { ThemeClasses, UISettings } from "../../types/ui";
+import { Tuning } from "../../types/guitar";
+import { Semitone } from "../../types/music";
 
 interface CustomTuningSelectorProps {
-  tuning: number[];
-  onChange: (tuning: number[]) => void;
+  tuning: Tuning;
+  onChange: (tuning: Tuning) => void;
   settings: UISettings;
 }
 
@@ -27,7 +29,7 @@ const CustomTuningSelector = ({ tuning, onChange, settings }: CustomTuningSelect
 
   const handleStringChange = (stringIndex: number, value: string | number) => {
     const newTuning = [...tuning];
-    newTuning[stringIndex] = parseInt(value.toString());
+    newTuning[stringIndex] = Number(value) as Semitone;
     onChange(newTuning);
   };
   

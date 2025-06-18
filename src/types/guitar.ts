@@ -1,6 +1,7 @@
 // Guitar-specific types
 
 import { Semitone, NoteName } from './music';
+import MusicTheory from '../services/musicTheory';
 
 export type StringIndex = number; // 0-5 for standard guitar
 export type FretNumber = number; // 0-24+ 
@@ -28,3 +29,6 @@ export interface RecommendedCapoPosition {
 export interface TuningDefinitions {
   [key: string]: Tuning;
 }
+
+export type TuningName = keyof typeof MusicTheory.TUNINGS | "Custom";
+
