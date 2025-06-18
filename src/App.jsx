@@ -8,8 +8,8 @@ import { useMusicalContext } from "./context/MusicalContext.jsx";
 import { Fretboard } from "./components/guitar/index.js";
 import { SettingsModal } from "./components/ui/modals/index.js";
 import { SettingsIcon } from "./components/ui/icons/index.js";
-import ModeSelector from "./components/ui/ModeSelector.jsx";
-import MainControls from "./components/ui/MainControls.jsx";
+import ModeSelector from "./components/ui/ModeSelector";
+import MainControls from "./components/ui/MainControls";
 import MusicTheory from "./services/musicTheory.js";
 
 // Main App Content (uses context)

@@ -1,4 +1,12 @@
-const ModeSelector = ({ viewMode, onViewModeChange, themeClasses }) => {
+import { ViewMode, ThemeClasses } from '../../types/ui';
+
+interface ModeSelectorProps {
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
+  themeClasses: Pick<ThemeClasses, 'cardBg' | 'border' | 'text'>;
+}
+
+const ModeSelector = ({ viewMode, onViewModeChange, themeClasses }: ModeSelectorProps) => {
   return (
     <div className="flex space-x-2">
       <button

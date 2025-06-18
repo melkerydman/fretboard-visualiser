@@ -1,6 +1,32 @@
 import MusicTheory from "../../services/musicTheory.js";
-import InputField from "./InputField.jsx";
-import CustomTuningSelector from "./CustomTuningSelector.jsx";
+import InputField from "./InputField";
+import CustomTuningSelector from "./CustomTuningSelector";
+import { ViewMode, ThemeClasses, UISettings } from "../../types/ui";
+import { NoteName, ChordType, ScaleType } from "../../types/music";
+import { Tuning, FretNumber } from "../../types/guitar";
+
+type TuningName = keyof typeof MusicTheory.TUNINGS | "Custom";
+
+interface MainControlsProps {
+  viewMode: ViewMode;
+  selectedRoot: NoteName;
+  selectedChord: ChordType;
+  selectedScale: ScaleType;
+  selectedTuning: TuningName;
+  customTuning: Tuning;
+  maxFrets: FretNumber;
+  availableNotes: NoteName[];
+  chordTypes: ChordType[];
+  scaleTypes: ScaleType[];
+  settings: UISettings;
+  themeClasses: Pick<ThemeClasses, 'text' | 'input'>;
+  onRootChange: (root: NoteName) => void;
+  onChordChange: (chord: ChordType) => void;
+  onScaleChange: (scale: ScaleType) => void;
+  onTuningChange: (tuning: TuningName) => void;
+  onCustomTuningChange: (tuning: Tuning) => void;
+  onMaxFretsChange: (frets: FretNumber) => void;
+}
 
 const MainControls = ({
   viewMode,
@@ -21,7 +47,7 @@ const MainControls = ({
   onTuningChange,
   onCustomTuningChange,
   onMaxFretsChange,
-}) => {
+}: MainControlsProps) => {
   const rootNoteOptions = availableNotes.map(note => ({ value: note, label: note }));
   const chordTypeOptions = chordTypes.map(chord => ({ value: chord, label: chord }));
   const scaleTypeOptions = scaleTypes.map(scale => ({ value: scale, label: scale }));
@@ -36,7 +62,7 @@ const MainControls = ({
         type="select"
         label="Root Note"
         value={selectedRoot}
-        onChange={onRootChange}
+        onChange={(value) => onRootChange(value as NoteName)}
         options={rootNoteOptions}
         themeClasses={themeClasses}
       />
@@ -46,7 +72,7 @@ const MainControls = ({
           type="select"
           label="Chord Type"
           value={selectedChord}
-          onChange={onChordChange}
+          onChange={(value) => onChordChange(value as ChordType)}
           options={chordTypeOptions}
           themeClasses={themeClasses}
         />
@@ -55,7 +81,7 @@ const MainControls = ({
           type="select"
           label="Scale Type"
           value={selectedScale}
-          onChange={onScaleChange}
+          onChange={(value) => onScaleChange(value as ScaleType)}
           options={scaleTypeOptions}
           themeClasses={themeClasses}
         />
@@ -66,7 +92,7 @@ const MainControls = ({
           type="select"
           label="Tuning"
           value={selectedTuning}
-          onChange={onTuningChange}
+          onChange={(value) => onTuningChange(value as TuningName)}
           options={tuningOptions}
           themeClasses={themeClasses}
         />
@@ -85,10 +111,10 @@ const MainControls = ({
         type="number"
         label="Max Frets"
         value={maxFrets}
-        onChange={onMaxFretsChange}
+        onChange={(value) => onMaxFretsChange(Number(value))}
+        themeClasses={themeClasses}
         min={12}
         max={24}
-        themeClasses={themeClasses}
       />
     </div>
   );

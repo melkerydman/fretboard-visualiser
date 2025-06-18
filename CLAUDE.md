@@ -177,6 +177,7 @@ src/
 3. 🔄 Continue extracting remaining large components (ChordIdentifier, StatusPanel, CapoControls)
 4. Complete TypeScript conversion of extracted components
 5. Create comprehensive shared types file
+6. **TODO: Refactor InputField to be properly polymorphic** - currently uses non-elegant interface approach for min/max props
 
 ## Claude Code Instructions
 
@@ -189,12 +190,15 @@ src/
 **Git Commit Guidelines:**
 - **NEVER add Claude as co-author when committing code**
 - Use standard commit messages without Claude attribution
+- **Keep commit messages simple and concise** - focus on major changes, avoid overly detailed explanations
 - Create logical checkpoint commits during refactoring work
 
 **Development Approach:**
 - Prefer editing existing files over creating new ones
 - Follow established TypeScript patterns and type definitions
 - **Avoid type casting (`as` keyword) as much as possible** - prefer proper type guards, narrowing, and strict typing
+- **Use ComponentPropsWithRef/WithoutRef when creating component interfaces** - leverage React's built-in types instead of recreating HTML element props
+- **Prefer Pick<Type, 'specific' | 'props'> over Partial<Type>** when you know exactly which properties a component needs - more precise and self-documenting
 - Maintain existing performance optimizations (useMemo patterns)
 - Run `npm run typecheck` after TypeScript changes
 - Run `npm run lint` before committing changes

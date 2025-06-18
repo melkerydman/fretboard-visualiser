@@ -1,13 +1,32 @@
+import { ThemeClasses } from '../../types/ui';
+
+interface Option {
+  value: string | number;
+  label: string;
+}
+
+interface InputFieldProps {
+  type?: "text" | "select" | "number";
+  label?: string;
+  value: string | number;
+  onChange: (value: string | number) => void;
+  options?: Option[];
+  min?: number;
+  max?: number;
+  themeClasses: Pick<ThemeClasses, 'text' | 'input'>;
+}
+
 const InputField = ({ 
   type = "text",
   label, 
   value, 
   onChange, 
-  options = [], // for select
-  min, 
-  max, // for number
-  themeClasses 
-}) => {
+  options = [],
+  min,
+  max,
+  themeClasses,
+  ...rest
+}: InputFieldProps) => {
   const renderInput = () => {
     switch (type) {
       case "select":
@@ -29,11 +48,10 @@ const InputField = ({
         return (
           <input
             type="number"
-            min={min}
-            max={max}
             value={value}
-            onChange={(e) => onChange(parseInt(e.target.value) || min)}
+            onChange={(e) => onChange(parseInt(e.target.value) || 0)}
             className={`w-full p-2 rounded border ${themeClasses.input}`}
+            {...rest}
           />
         );
       
@@ -44,6 +62,7 @@ const InputField = ({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={`w-full p-2 rounded border ${themeClasses.input}`}
+            {...rest}
           />
         );
     }
@@ -51,11 +70,13 @@ const InputField = ({
 
   return (
     <div>
-      <label
-        className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
+        >
+          {label}
+        </label>
+      )}
       {renderInput()}
     </div>
   );

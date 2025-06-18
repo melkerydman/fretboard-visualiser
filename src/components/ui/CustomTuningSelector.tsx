@@ -1,9 +1,16 @@
 import { useMusicalContext } from "../../context/MusicalContext.jsx";
 import MusicTheory from "../../services/musicTheory.js";
 import { STRING_LABELS } from "../../constants/index.js";
-import InputField from "./InputField.jsx";
+import InputField from "./InputField";
+import { ThemeClasses, UISettings } from "../../types/ui";
 
-const CustomTuningSelector = ({ tuning, onChange, settings }) => {
+interface CustomTuningSelectorProps {
+  tuning: number[];
+  onChange: (tuning: number[]) => void;
+  settings: UISettings;
+}
+
+const CustomTuningSelector = ({ tuning, onChange, settings }: CustomTuningSelectorProps) => {
   const { getNoteName } = useMusicalContext();
   
   const noteOptions = MusicTheory.NOTES.map((_, noteIndex) => ({
@@ -11,16 +18,16 @@ const CustomTuningSelector = ({ tuning, onChange, settings }) => {
     label: getNoteName(noteIndex)
   }));
 
-  const themeClasses = {
+  const themeClasses: Pick<ThemeClasses, 'text' | 'input'> = {
     text: settings.darkMode ? "text-gray-200" : "text-gray-700",
     input: settings.darkMode
       ? "bg-gray-700 border-gray-600 text-white"
       : "bg-white border-gray-300 text-gray-900"
   };
 
-  const handleStringChange = (stringIndex, value) => {
+  const handleStringChange = (stringIndex: number, value: string | number) => {
     const newTuning = [...tuning];
-    newTuning[stringIndex] = parseInt(value);
+    newTuning[stringIndex] = parseInt(value.toString());
     onChange(newTuning);
   };
   
