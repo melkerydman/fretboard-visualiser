@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { GuitarProvider, useGuitar } from "../context/index.js";
+import { MusicalContextProvider } from "../context/MusicalContext.jsx";
 // import { useGuitarCalculations } from '../hooks/guitar/index.js';
 import { useMusicTheory } from "../hooks/music/index.js";
 import { useTheme } from "../hooks/ui/useTheme.js";
+import { useMusicalContext, useNoteName, useFormattedNotes } from "../context/MusicalContext.jsx";
 import { Fretboard } from "../components/guitar/index.js";
 import { SettingsModal } from "../components/ui/modals/index.js";
 import { SettingsIcon } from "../components/ui/icons/index.js";
@@ -11,6 +13,8 @@ import { STRING_LABELS } from "../constants/index.js";
 
 // Custom Tuning Selector Component
 const CustomTuningSelector = ({ tuning, onChange, settings }) => {
+  const { getNoteName } = useMusicalContext();
+  
   return (
     <div className="space-y-2">
       <label
@@ -36,9 +40,9 @@ const CustomTuningSelector = ({ tuning, onChange, settings }) => {
                 : "bg-white border-gray-300 text-gray-900"
             }`}
           >
-            {MusicTheory.NOTES.map((note, noteIndex) => (
+            {MusicTheory.NOTES.map((_, noteIndex) => (
               <option key={noteIndex} value={noteIndex}>
-                {note}
+                {getNoteName(noteIndex)}
               </option>
             ))}
           </select>
@@ -100,6 +104,9 @@ const FretboardVisualizerContent = () => {
     toggleIncludeCapoNotes,
   } = useGuitar();
 
+  // Musical context for smart note naming
+  const { getNoteName, formatNoteNames } = useMusicalContext();
+
   // UI State (separate from guitar context)
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState({
@@ -142,7 +149,7 @@ const FretboardVisualizerContent = () => {
     const scaleNotes = MusicTheory.generateScale(selectedRoot, selectedScale);
     
     scaleNotes.forEach((note, index) => {
-      const noteName = MusicTheory.semitoneToNote(note);
+      const noteName = getNoteName(note);
       groupedChords[noteName] = {
         root: noteName,
         rootSemitone: note,
@@ -153,7 +160,7 @@ const FretboardVisualizerContent = () => {
 
     console.log("Grouped scale chords:", groupedChords);
     return Object.values(groupedChords);
-  }, [viewMode, selectedRoot, selectedScale]);
+  }, [viewMode, selectedRoot, selectedScale, getNoteName]);
 
   // Event handlers
   const handleNoteClick = (noteData) => {
@@ -373,11 +380,11 @@ const FretboardVisualizerContent = () => {
                         : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
                     }`}
                     title={pos.isCapo 
-                      ? `Capo note: ${MusicTheory.semitoneToNote(pos.note)} on String ${pos.string + 1}, Fret ${pos.fret}`
-                      : `Click to remove ${MusicTheory.semitoneToNote(pos.note)} from String ${pos.string + 1}, Fret ${pos.fret}`
+                      ? `Capo note: ${getNoteName(pos.note)} on String ${pos.string + 1}, Fret ${pos.fret}`
+                      : `Click to remove ${getNoteName(pos.note)} from String ${pos.string + 1}, Fret ${pos.fret}`
                     }
                   >
-                    {MusicTheory.semitoneToNote(pos.note)}{pos.isCapo ? ' 🎸' : ' ×'}
+                    {getNoteName(pos.note)}{pos.isCapo ? ' 🎸' : ' ×'}
                   </button>
                 ))
               ) : (
@@ -410,7 +417,7 @@ const FretboardVisualizerContent = () => {
                       </span>
                     </div>
                     <div className={`text-xs mt-1 ${themeClasses.textSecondary}`}>
-                      Notes: {chord.notes.map(note => MusicTheory.semitoneToNote(note)).join(" ")}
+                      Notes: {formatNoteNames(chord.notes)}
                     </div>
                     {chord.isPartial && (
                       <div className="text-xs text-orange-500 mt-1">
@@ -494,10 +501,7 @@ const FretboardVisualizerContent = () => {
                 </button>
               </div>
               <div className={`text-xs mt-1 ${themeClasses.textSecondary}`}>
-                Notes:{" "}
-                {selectedScaleChord.notes
-                  .map((note) => MusicTheory.semitoneToNote(note))
-                  .join(" ")}
+                Notes: {formatNoteNames(selectedScaleChord.notes)}
               </div>
             </div>
           )}
@@ -516,16 +520,12 @@ const FretboardVisualizerContent = () => {
           </span>
           <span className={themeClasses.text}>
             <strong>Tuning:</strong>{" "}
-            {currentTuning
-              .map((note) => MusicTheory.semitoneToNote(note))
-              .join("-")}{" "}
+            {formatNoteNames(currentTuning, "-")}{" "}
             (Low to High)
           </span>
           <span className={themeClasses.text}>
             <strong>Notes:</strong>{" "}
-            {highlightedNotes
-              .map((note) => MusicTheory.semitoneToNote(note))
-              .join(" ")}
+            {formatNoteNames(highlightedNotes)}
           </span>
           {capo && (
             <span className={themeClasses.text}>
@@ -655,11 +655,13 @@ const FretboardVisualizerContent = () => {
   );
 };
 
-// Main App Container with Provider
+// Main App Container with Providers
 const FretboardVisualizerApp = () => {
   return (
     <GuitarProvider>
-      <FretboardVisualizerContent />
+      <MusicalContextProvider>
+        <FretboardVisualizerContent />
+      </MusicalContextProvider>
     </GuitarProvider>
   );
 };

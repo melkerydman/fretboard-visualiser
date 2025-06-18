@@ -59,6 +59,160 @@ const MusicTheory = {
     return notes[semitone % 12];
   },
 
+  // Key signatures that use sharps
+  SHARP_KEYS: ['G', 'D', 'A', 'E', 'B', 'F#', 'C#'],
+  
+  // Key signatures that use flats  
+  FLAT_KEYS: ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb'],
+
+  // Get theoretically correct note name based on musical context
+  getContextualNoteName(semitone, context = {}) {
+    const { key, scale } = context;
+    
+    // If no context provided, default to sharps (common in guitar music)
+    if (!key) {
+      return this.semitoneToNote(semitone, false);
+    }
+    
+    // For scale contexts, always try to use the scale's proper note spelling first
+    if (scale && key) {
+      const scaleNoteName = this.getScaleNoteName(semitone, key, scale);
+      if (scaleNoteName) {
+        return scaleNoteName;
+      }
+      // If not found in scale, fall through to chromatic logic
+    }
+    
+    // For chromatic notes (not in scale) or non-scale contexts,
+    // use intelligent enharmonic choice based on key center
+    return this.getIntelligentEnharmonic(semitone, key, scale);
+  },
+
+  // Get intelligent enharmonic spelling for chromatic notes
+  getIntelligentEnharmonic(semitone, key, scale) {
+    const normalizedSemitone = semitone % 12;
+    
+    // Determine preference based on key and scale type
+    let prefersFlats = this.FLAT_KEYS.includes(key);
+    
+    // Special considerations for minor keys and modes
+    if (scale) {
+      // Minor keys often use different enharmonics than their relative major
+      if (scale === 'minor') {
+        prefersFlats = this.getMinorKeyFlatPreference(key);
+      }
+      // Modes inherit from their parent scale's preference
+      else if (['dorian', 'phrygian', 'lydian', 'mixolydian', 'locrian'].includes(scale)) {
+        prefersFlats = this.getModeKeyFlatPreference(key);
+      }
+    }
+    
+    // Special handling for ambiguous chromatic notes
+    switch (normalizedSemitone) {
+      case 1: // C#/Db
+        return prefersFlats ? 'Db' : 'C#';
+      case 3: // D#/Eb  
+        return prefersFlats ? 'Eb' : 'D#';
+      case 6: // F#/Gb
+        return prefersFlats ? 'Gb' : 'F#';
+      case 8: // G#/Ab
+        return prefersFlats ? 'Ab' : 'G#';
+      case 10: // A#/Bb
+        return prefersFlats ? 'Bb' : 'A#';
+      default:
+        // For natural notes, no ambiguity
+        return this.semitoneToNote(normalizedSemitone, false);
+    }
+  },
+
+  // Determine flat preference for minor keys
+  getMinorKeyFlatPreference(key) {
+    // Natural minor keys that typically use flats for chromatic notes
+    const flatMinorKeys = ['D', 'G', 'C', 'F', 'Bb', 'Eb', 'Ab'];
+    return flatMinorKeys.includes(key);
+  },
+
+  // Determine flat preference for modal keys
+  getModeKeyFlatPreference(key) {
+    // For modes, consider what the parent major scale would be
+    // This is a simplified approach - could be made more sophisticated
+    return this.FLAT_KEYS.includes(key);
+  },
+
+  // Get note name from scale context (returns null if not in scale)
+  getScaleNoteName(semitone, rootNote, scaleType) {
+    const scaleNotes = this.generateScaleWithNames(rootNote, scaleType);
+    const targetSemitone = semitone % 12;
+    
+    // Find the note in the generated scale
+    const scaleNote = scaleNotes.find(note => note.semitone === targetSemitone);
+    return scaleNote ? scaleNote.name : null; // Return null if not found in scale
+  },
+
+  // Generate a scale with proper note names (alphabetical sequence)
+  generateScaleWithNames(rootNote, scaleType) {
+    const rootSemitone = typeof rootNote === "string" ? this.noteToSemitone(rootNote) : rootNote;
+    const rootNoteName = typeof rootNote === "string" ? rootNote : this.semitoneToNote(rootNote);
+    const formula = this.SCALE_FORMULAS[scaleType] || this.SCALE_FORMULAS.major;
+    
+    // Base note letters in order
+    const noteLetters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    
+    // Find starting letter
+    const rootLetter = rootNoteName.charAt(0);
+    const startIndex = noteLetters.indexOf(rootLetter);
+    
+    // Generate scale ensuring each letter is used exactly once
+    const scaleNotes = [];
+    
+    formula.forEach((interval, index) => {
+      const semitone = (rootSemitone + interval) % 12;
+      const letterIndex = (startIndex + index) % 7;
+      const targetLetter = noteLetters[letterIndex];
+      
+      // Find the correct enharmonic spelling for this letter
+      const noteName = this.getEnharmonicForLetter(semitone, targetLetter);
+      
+      scaleNotes.push({
+        semitone,
+        name: noteName,
+        letter: targetLetter,
+        interval
+      });
+    });
+    
+    return scaleNotes;
+  },
+
+  // Get the correct enharmonic spelling for a specific letter
+  getEnharmonicForLetter(semitone, targetLetter) {
+    const normalizedSemitone = semitone % 12;
+    
+    // Map each semitone to possible note names
+    const enharmonicMap = {
+      0: ['C', 'B#', 'Dbb'],
+      1: ['C#', 'Db', 'B##'],
+      2: ['D', 'C##', 'Ebb'],
+      3: ['D#', 'Eb', 'Fbb'],
+      4: ['E', 'D##', 'Fb'],
+      5: ['F', 'E#', 'Gbb'],
+      6: ['F#', 'Gb', 'E##'],
+      7: ['G', 'F##', 'Abb'],
+      8: ['G#', 'Ab'],
+      9: ['A', 'G##', 'Bbb'],
+      10: ['A#', 'Bb', 'Cbb'],
+      11: ['B', 'A##', 'Cb']
+    };
+    
+    const possibleNames = enharmonicMap[normalizedSemitone] || [];
+    
+    // Find the name that starts with the target letter
+    const match = possibleNames.find(name => name.charAt(0) === targetLetter);
+    
+    // If we find a match, use it; otherwise fall back to default
+    return match || this.semitoneToNote(normalizedSemitone);
+  },
+
   generateChord(rootNote, chordType) {
     const rootSemitone =
       typeof rootNote === "string" ? this.noteToSemitone(rootNote) : rootNote;
@@ -73,7 +227,7 @@ const MusicTheory = {
     return formula.map((interval) => (rootSemitone + interval) % 12);
   },
 
-  findNotePositions(tuning, targetNotes, maxFrets = 24) {
+  findNotePositions(tuning, targetNotes, maxFrets = 24, context = {}) {
     const positions = [];
     tuning.forEach((openNote, stringIndex) => {
       for (let fret = 0; fret <= maxFrets; fret++) {
@@ -83,7 +237,7 @@ const MusicTheory = {
             string: stringIndex,
             fret: fret,
             note: noteAtFret,
-            noteName: this.semitoneToNote(noteAtFret),
+            noteName: this.getContextualNoteName(noteAtFret, context),
           });
         }
       }
@@ -124,8 +278,14 @@ const MusicTheory = {
     const scaleNotes = this.generateScale(rootSemitone, scaleType);
     const chords = [];
 
+    // Create musical context for the scale
+    const scaleContext = {
+      key: typeof rootNote === "string" ? rootNote : this.semitoneToNote(rootSemitone),
+      scale: scaleType
+    };
+
     scaleNotes.forEach((note) => {
-      const noteName = this.semitoneToNote(note);
+      const noteName = this.getContextualNoteName(note, scaleContext);
 
       Object.keys(this.CHORD_FORMULAS).forEach((chordType) => {
         const chordNotes = this.generateChord(note, chordType);
@@ -153,7 +313,7 @@ const MusicTheory = {
     });
   },
 
-  identifyChords(selectedNotes) {
+  identifyChords(selectedNotes, _context = {}) {
     if (!selectedNotes || selectedNotes.length < 2) {
       return [];
     }
@@ -173,11 +333,15 @@ const MusicTheory = {
         
         // Require at least 2 matching notes and good coverage
         if (matchingNotes.length >= 2 && coveragePercentage >= 0.6) {
+          // Use context-aware note naming for the chord
+          const chordContext = { key: this.semitoneToNote(root), chord: chordType };
+          const rootName = this.getContextualNoteName(root, chordContext);
+          
           matches.push({
             root,
-            rootName: this.semitoneToNote(root),
+            rootName,
             type: chordType,
-            name: `${this.semitoneToNote(root)} ${chordType}`,
+            name: `${rootName} ${chordType}`,
             notes: chordNotes,
             matchingNotes,
             confidence: Math.round((matchPercentage * 0.7 + coveragePercentage * 0.3) * 100),
@@ -198,11 +362,16 @@ const MusicTheory = {
         
         if (matchingNotes.length >= 2 && coveragePercentage >= 0.6) {
           const inversionName = potentialRoot !== normalizedNotes[0] ? " (inversion)" : "";
+          
+          // Use context-aware note naming for the chord
+          const chordContext = { key: this.semitoneToNote(potentialRoot), chord: chordType };
+          const rootName = this.getContextualNoteName(potentialRoot, chordContext);
+          
           matches.push({
             root: potentialRoot,
-            rootName: this.semitoneToNote(potentialRoot),
+            rootName,
             type: chordType,
-            name: `${this.semitoneToNote(potentialRoot)} ${chordType}${inversionName}`,
+            name: `${rootName} ${chordType}${inversionName}`,
             notes: chordNotes,
             matchingNotes,
             confidence: Math.round((matchPercentage * 0.7 + coveragePercentage * 0.3) * (inversionName ? 90 : 100)),

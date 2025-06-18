@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import MusicTheory from '../../musicTheory.js';
 import { FRET_MARKERS } from '../../constants/index.js';
+import { useMusicalContext } from '../../context/MusicalContext.jsx';
 
 const Fretboard = ({
   tuning = MusicTheory.STANDARD_TUNING,
@@ -23,6 +24,9 @@ const Fretboard = ({
   const isVertical = settings.verticalFretboard;
   const isCompact = settings.layoutSize === "compact";
   const isLeftHanded = settings.leftHanded;
+
+  // Get musical context for smart note naming
+  const { musicalContext, getNoteName } = useMusicalContext();
 
   // Helper function to get visual string position
   const getVisualStringPosition = (logicalString) => {
@@ -99,8 +103,8 @@ const Fretboard = ({
 
   const notePositions = useMemo(() => {
     if (highlightedNotes.length === 0) return [];
-    return MusicTheory.findNotePositions(tuning, highlightedNotes, maxFrets);
-  }, [tuning, highlightedNotes, maxFrets]);
+    return MusicTheory.findNotePositions(tuning, highlightedNotes, maxFrets, musicalContext);
+  }, [tuning, highlightedNotes, maxFrets, musicalContext]);
 
   const theme = {
     fretboard: settings.darkMode ? "#3A2818" : "#D4A574", // East Indian Rosewood fretboard color
@@ -702,7 +706,7 @@ const Fretboard = ({
 
   const renderTuningLabels = () => {
     return tuning.map((note, stringIndex) => {
-      const noteName = MusicTheory.semitoneToNote(note);
+      const noteName = getNoteName(note);
 
       let x, y;
       if (isVertical) {

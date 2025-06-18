@@ -75,6 +75,11 @@ export const GuitarProvider = ({ children }) => {
     }
 
     const capoPositions = [];
+    const musicalContext = {
+      key: selectedRoot,
+      scale: viewMode === "scale" ? selectedScale : null,
+      chord: viewMode === "chord" ? selectedChord : null
+    };
     
     // Determine which logical strings are covered
     if (capo.fromTop) {
@@ -87,7 +92,7 @@ export const GuitarProvider = ({ children }) => {
           string: stringIndex,
           fret: capo.fret,
           note: noteAtCapo,
-          noteName: MusicTheory.semitoneToNote(noteAtCapo),
+          noteName: MusicTheory.getContextualNoteName(noteAtCapo, musicalContext),
           isCapo: true
         });
       }
@@ -101,14 +106,14 @@ export const GuitarProvider = ({ children }) => {
           string: stringIndex,
           fret: capo.fret,
           note: noteAtCapo,
-          noteName: MusicTheory.semitoneToNote(noteAtCapo),
+          noteName: MusicTheory.getContextualNoteName(noteAtCapo, musicalContext),
           isCapo: true
         });
       }
     }
 
     return capoPositions;
-  }, [capo, includeCapoNotes, viewMode, currentTuning]);
+  }, [capo, includeCapoNotes, viewMode, currentTuning, selectedRoot, selectedScale, selectedChord]);
 
   // Combined notes for chord identification (manual selections + capo notes, with manual taking precedence)
   const effectiveSelectedNotes = useMemo(() => {
@@ -134,12 +139,17 @@ export const GuitarProvider = ({ children }) => {
   useEffect(() => {
     if (viewMode === "identifier" && effectiveSelectedNotes.length > 0) {
       const noteValues = effectiveSelectedNotes.map(pos => pos.note);
-      const chords = MusicTheory.identifyChords(noteValues);
+      const musicalContext = {
+        key: selectedRoot,
+        scale: viewMode === "scale" ? selectedScale : null,
+        chord: viewMode === "chord" ? selectedChord : null
+      };
+      const chords = MusicTheory.identifyChords(noteValues, musicalContext);
       setIdentifiedChords(chords);
     } else {
       setIdentifiedChords([]);
     }
-  }, [effectiveSelectedNotes, viewMode]);
+  }, [effectiveSelectedNotes, viewMode, selectedRoot, selectedScale, selectedChord]);
 
   // Complex Action Functions
   const addCapo = () => {
