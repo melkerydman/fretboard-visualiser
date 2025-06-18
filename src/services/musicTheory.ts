@@ -1,5 +1,7 @@
 // ==================== MUSIC THEORY MODULE ====================
 
+import type { NoteName, Semitone, ChordType, ScaleType, MusicalContext } from '../types';
+
 const MusicTheory = {
   NOTES: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
   FLAT_NOTES: ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
@@ -45,7 +47,7 @@ const MusicTheory = {
     cgBbgfc: [0, 7, 10, 7, 5, 0], // C G Bb G F C
   },
 
-  noteToSemitone(noteName) {
+  noteToSemitone(noteName: NoteName): Semitone {
     const note = noteName.toUpperCase();
     let index = this.NOTES.indexOf(note);
     if (index === -1) {
@@ -54,7 +56,7 @@ const MusicTheory = {
     return index !== -1 ? index : 0;
   },
 
-  semitoneToNote(semitone, useFlats = false) {
+  semitoneToNote(semitone: Semitone, useFlats: boolean = false): NoteName {
     const notes = useFlats ? this.FLAT_NOTES : this.NOTES;
     return notes[semitone % 12];
   },
@@ -66,7 +68,7 @@ const MusicTheory = {
   FLAT_KEYS: ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb'],
 
   // Get theoretically correct note name based on musical context
-  getContextualNoteName(semitone, context = {}) {
+  getContextualNoteName(semitone: Semitone, context: MusicalContext = {}): NoteName {
     const { key, scale } = context;
     
     // If no context provided, default to sharps (common in guitar music)
@@ -213,14 +215,14 @@ const MusicTheory = {
     return match || this.semitoneToNote(normalizedSemitone);
   },
 
-  generateChord(rootNote, chordType) {
+  generateChord(rootNote: NoteName | Semitone, chordType: ChordType): Semitone[] {
     const rootSemitone =
       typeof rootNote === "string" ? this.noteToSemitone(rootNote) : rootNote;
     const formula = this.CHORD_FORMULAS[chordType] || this.CHORD_FORMULAS.major;
     return formula.map((interval) => (rootSemitone + interval) % 12);
   },
 
-  generateScale(rootNote, scaleType) {
+  generateScale(rootNote: NoteName | Semitone, scaleType: ScaleType): Semitone[] {
     const rootSemitone =
       typeof rootNote === "string" ? this.noteToSemitone(rootNote) : rootNote;
     const formula = this.SCALE_FORMULAS[scaleType] || this.SCALE_FORMULAS.major;
