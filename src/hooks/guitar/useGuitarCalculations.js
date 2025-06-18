@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import MusicTheory from '../../musicTheory.js';
+import MusicTheory from '../../services/musicTheory.js';
 
 export const useGuitarCalculations = (tuning, capo, maxFrets) => {
   // Calculate effective tuning considering capo

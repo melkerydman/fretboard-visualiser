@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from 'react';
-import MusicTheory from '../../musicTheory.js';
+import MusicTheory from '../../services/musicTheory.js';
 import { FRET_MARKERS } from '../../constants/index.js';
 import { useMusicalContext } from '../../context/MusicalContext.jsx';
 

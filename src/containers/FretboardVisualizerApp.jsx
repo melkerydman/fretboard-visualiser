@@ -8,7 +8,7 @@ import { useMusicalContext } from "../context/MusicalContext.jsx";
 import { Fretboard } from "../components/guitar/index.js";
 import { SettingsModal } from "../components/ui/modals/index.js";
 import { SettingsIcon } from "../components/ui/icons/index.js";
-import MusicTheory from "../musicTheory.js";
+import MusicTheory from "../services/musicTheory.js";
 import { STRING_LABELS } from "../constants/index.js";
 
 // Custom Tuning Selector Component

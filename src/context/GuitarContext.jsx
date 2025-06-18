@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
-import MusicTheory from '../musicTheory.js';
+import MusicTheory from '../services/musicTheory.js';
 
 const GuitarContext = createContext();
 
