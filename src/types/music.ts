@@ -1,20 +1,13 @@
 // Core music theory types
 
+import { NOTE_NAMES, CHORD_TYPES, SCALE_TYPES } from '../constants/musicTheory';
+
 export type Semitone = number; // 0-11, but allowing math operations
 export type NoteLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
-export type NoteName = 
-  | "C" | "C#" | "Db" | "D" | "D#" | "Eb" | "E" | "F" 
-  | "F#" | "Gb" | "G" | "G#" | "Ab" | "A" | "A#" | "Bb" | "B"
-  | "B#" | "Cb" | "E#" | "Fb"; // Include enharmonic equivalents
 
-export type ChordType = 
-  | "major" | "minor" | "dim" | "aug" | "sus2" | "sus4" 
-  | "maj7" | "min7" | "dom7" | "dim7" | "maj9" | "min9" | "add9";
-
-export type ScaleType = 
-  | "major" | "minor" | "dorian" | "phrygian" | "lydian" 
-  | "mixolydian" | "locrian" | "pentatonic" | "blues" 
-  | "harmonic_minor" | "melodic_minor";
+export type NoteName = typeof NOTE_NAMES[number];
+export type ChordType = typeof CHORD_TYPES[number];
+export type ScaleType = typeof SCALE_TYPES[number];
 
 export interface MusicalContext {
   key?: NoteName;
