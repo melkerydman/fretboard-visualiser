@@ -61,29 +61,11 @@ export const MusicalContextProvider = ({ children }) => {
   );
 };
 
-// Hook to use musical context
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMusicalContext = () => {
   const context = useContext(MusicalContext);
   if (!context) {
     throw new Error('useMusicalContext must be used within a MusicalContextProvider');
   }
   return context;
-};
-
-// Convenience hook for just getting note names
-export const useNoteName = (semitone, overrideContext = null) => {
-  const { getNoteName } = useMusicalContext();
-  return getNoteName(semitone, overrideContext);
-};
-
-// Convenience hook for multiple note names
-export const useNoteNames = (semitones, overrideContext = null) => {
-  const { getNoteNames } = useMusicalContext();
-  return getNoteNames(semitones, overrideContext);
-};
-
-// Convenience hook for formatted note names
-export const useFormattedNotes = (semitones, separator = " ", overrideContext = null) => {
-  const { formatNoteNames } = useMusicalContext();
-  return formatNoteNames(semitones, separator, overrideContext);
 };

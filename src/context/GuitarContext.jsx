@@ -3,14 +3,6 @@ import MusicTheory from '../musicTheory.js';
 
 const GuitarContext = createContext();
 
-export const useGuitar = () => {
-  const context = useContext(GuitarContext);
-  if (!context) {
-    throw new Error('useGuitar must be used within a GuitarProvider');
-  }
-  return context;
-};
-
 export const GuitarProvider = ({ children }) => {
   // Music Theory State
   const [selectedRoot, setSelectedRoot] = useState("C");
@@ -280,4 +272,13 @@ export const GuitarProvider = ({ children }) => {
       {children}
     </GuitarContext.Provider>
   );
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useGuitar = () => {
+  const context = useContext(GuitarContext);
+  if (!context) {
+    throw new Error('useGuitar must be used within a GuitarProvider');
+  }
+  return context;
 };
