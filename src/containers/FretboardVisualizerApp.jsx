@@ -4,7 +4,7 @@ import { MusicalContextProvider } from "../context/MusicalContext.jsx";
 // import { useGuitarCalculations } from '../hooks/guitar/index.js';
 import { useMusicTheory } from "../hooks/music/index.js";
 import { useTheme } from "../hooks/ui/useTheme.js";
-import { useMusicalContext, useNoteName, useFormattedNotes } from "../context/MusicalContext.jsx";
+import { useMusicalContext } from "../context/MusicalContext.jsx";
 import { Fretboard } from "../components/guitar/index.js";
 import { SettingsModal } from "../components/ui/modals/index.js";
 import { SettingsIcon } from "../components/ui/icons/index.js";

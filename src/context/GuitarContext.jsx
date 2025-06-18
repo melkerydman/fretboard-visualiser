@@ -139,17 +139,12 @@ export const GuitarProvider = ({ children }) => {
   useEffect(() => {
     if (viewMode === "identifier" && effectiveSelectedNotes.length > 0) {
       const noteValues = effectiveSelectedNotes.map(pos => pos.note);
-      const musicalContext = {
-        key: selectedRoot,
-        scale: viewMode === "scale" ? selectedScale : null,
-        chord: viewMode === "chord" ? selectedChord : null
-      };
-      const chords = MusicTheory.identifyChords(noteValues, musicalContext);
+      const chords = MusicTheory.identifyChords(noteValues);
       setIdentifiedChords(chords);
     } else {
       setIdentifiedChords([]);
     }
-  }, [effectiveSelectedNotes, viewMode, selectedRoot, selectedScale, selectedChord]);
+  }, [effectiveSelectedNotes, viewMode]);
 
   // Complex Action Functions
   const addCapo = () => {

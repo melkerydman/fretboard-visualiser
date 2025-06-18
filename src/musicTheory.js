@@ -313,7 +313,7 @@ const MusicTheory = {
     });
   },
 
-  identifyChords(selectedNotes, _context = {}) {
+  identifyChords(selectedNotes) {
     if (!selectedNotes || selectedNotes.length < 2) {
       return [];
     }

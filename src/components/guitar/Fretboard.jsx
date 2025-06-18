@@ -96,8 +96,6 @@ const Fretboard = ({
   // Neck positioning within SVG
   const neckStartX = isVertical ? neckMargin : neckMargin + headstockLength;
   const neckStartY = isVertical ? neckMargin + headstockLength : neckMargin;
-  const neckEndX = neckStartX + neckWidth;
-  const neckEndY = neckStartY + neckHeight;
 
   const svgRef = useRef(null);
 
