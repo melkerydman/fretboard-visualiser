@@ -46,6 +46,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // Computed dark mode based on theme setting
   const darkMode = theme === "dark" || (theme === "system" && systemDarkMode);
 
+  // Set data-theme attribute on document root for CSS variables
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   // Theme classes for styling
   const themeClasses: ThemeClasses = {
     bg: darkMode ? "bg-gray-900" : "bg-gray-50",

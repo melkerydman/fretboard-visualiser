@@ -3,12 +3,10 @@ import InputField from "./InputField";
 import CustomTuningSelector from "./CustomTuningSelector";
 import { NoteName, ChordType, ScaleType } from "@/types/music";
 import { TuningName } from "@/types/guitar";
-import { useGuitar, useTheme } from "@/context";
+import { useGuitar } from "@/context";
 import { useMusicTheory } from "@/hooks/music/index.js";
 
 const MainControls = () => {
-  // Get contexts (settings not needed as components use theme context directly)
-  const { themeClasses } = useTheme();
   // Get guitar state and actions from context
   const {
     viewMode,
@@ -55,7 +53,6 @@ const MainControls = () => {
           value={selectedChord}
           onChange={(value) => setSelectedChord(value as ChordType)}
           options={chordTypeOptions}
-          themeClasses={themeClasses}
         />
       ) : (
         <InputField
@@ -64,7 +61,6 @@ const MainControls = () => {
           value={selectedScale}
           onChange={(value) => setSelectedScale(value as ScaleType)}
           options={scaleTypeOptions}
-          themeClasses={themeClasses}
         />
       )}
 
@@ -75,7 +71,6 @@ const MainControls = () => {
           value={selectedTuning}
           onChange={(value) => setSelectedTuning(value as TuningName)}
           options={tuningOptions}
-          themeClasses={themeClasses}
         />
         {selectedTuning === "Custom" && (
           <div className="mt-4">
@@ -92,7 +87,6 @@ const MainControls = () => {
         label="Max Frets"
         value={maxFrets}
         onChange={(value) => setMaxFrets(Number(value))}
-        themeClasses={themeClasses}
         min={12}
         max={24}
       />

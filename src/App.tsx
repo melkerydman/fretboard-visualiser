@@ -7,7 +7,6 @@ import {
   SettingsProvider,
   useSettings,
   ThemeProvider,
-  useTheme,
 } from "@/context";
 import type { NotePosition, Capo, UISettings } from "@/types";
 import { Fretboard } from "@/components/guitar";
@@ -36,7 +35,6 @@ const AppContent = () => {
   // UI State
   const [showSettings, setShowSettings] = useState(false);
   const { settings, updateSettings } = useSettings();
-  const { themeClasses } = useTheme();
 
   // Event handlers
   const handleNoteClick = (noteData: NotePosition) => {
@@ -59,15 +57,12 @@ const AppContent = () => {
     updateSettings(newSettings);
   };
 
-
   const isSpacious = settings.layoutSize === "spacious";
   const isVertical = settings.verticalFretboard;
   const useSideBySide = isSpacious && isVertical;
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-200 ${themeClasses.bg}`}
-    >
+    <div className="min-h-screen transition-colors duration-200 bg-[var(--color-background)]">
       <div className="container mx-auto p-4">
         <Header onSettingsClick={() => setShowSettings(true)} />
 

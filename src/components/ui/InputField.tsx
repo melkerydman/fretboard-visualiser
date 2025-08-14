@@ -1,6 +1,3 @@
-import { ThemeClasses } from '../../types/ui';
-import { useTheme } from '../../context';
-
 interface Option {
   value: string | number;
   label: string;
@@ -14,7 +11,6 @@ interface InputFieldProps {
   options?: Option[];
   min?: number;
   max?: number;
-  themeClasses?: Pick<ThemeClasses, 'text' | 'input'>;
 }
 
 const InputField = ({ 
@@ -25,19 +21,18 @@ const InputField = ({
   options = [],
   min,
   max,
-  themeClasses: propThemeClasses,
   ...rest
 }: InputFieldProps) => {
-  const { themeClasses: contextThemeClasses } = useTheme();
-  const themeClasses = propThemeClasses || { text: contextThemeClasses.text, input: contextThemeClasses.input };
   const renderInput = () => {
+    const inputClasses = "w-full p-2 rounded border bg-[var(--color-input-bg)] border-[var(--color-input-border)] text-[var(--color-input-text)] focus:border-[var(--color-border-focus)] focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)]";
+    
     switch (type) {
       case "select":
         return (
           <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={`w-full p-2 rounded border ${themeClasses.input}`}
+            className={inputClasses}
           >
             {options.map((option) => (
               <option key={option.value} value={option.value}>
@@ -53,7 +48,7 @@ const InputField = ({
             type="number"
             value={value}
             onChange={(e) => onChange(parseInt(e.target.value) || 0)}
-            className={`w-full p-2 rounded border ${themeClasses.input}`}
+            className={inputClasses}
             min={min}
             max={max}
             {...rest}
@@ -66,7 +61,7 @@ const InputField = ({
             type={type}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={`w-full p-2 rounded border ${themeClasses.input}`}
+            className={inputClasses}
             {...rest}
           />
         );
@@ -76,9 +71,7 @@ const InputField = ({
   return (
     <div>
       {label && (
-        <label
-          className={`block text-sm font-medium mb-2 ${themeClasses.text}`}
-        >
+        <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">
           {label}
         </label>
       )}
