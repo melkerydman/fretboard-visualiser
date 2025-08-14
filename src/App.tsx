@@ -12,7 +12,7 @@ import {
 import type { NotePosition, Capo, UISettings } from "@/types";
 import { Fretboard } from "@/components/guitar";
 import { SettingsModal } from "@/components/ui/modals";
-import { SettingsIcon } from "@/components/ui/icons";
+import { Header } from "@/components/layout";
 import Dashboard from "@/components/ui/Dashboard";
 
 // Main App Content (uses context)
@@ -68,23 +68,8 @@ const AppContent = () => {
     <div
       className={`min-h-screen transition-colors duration-200 ${themeClasses.bg}`}
     >
-      <div
-        className={`container mx-auto p-4 ${useSideBySide ? "" : "space-y-6"}`}
-      >
-        {/* Header */}
-        <div
-          className={`flex justify-between items-center ${themeClasses.text} ${
-            useSideBySide ? "mb-6" : ""
-          }`}
-        >
-          <h1 className="text-3xl font-bold">Guitar Fretboard Visualizer</h1>
-          <button
-            onClick={() => setShowSettings(true)}
-            className={`p-2 rounded-lg transition-colors ${themeClasses.button}`}
-          >
-            <SettingsIcon />
-          </button>
-        </div>
+      <div className="container mx-auto p-4">
+        <Header onSettingsClick={() => setShowSettings(true)} />
 
         {useSideBySide ? (
           /* Side-by-side layout for spacious + vertical (only on lg+ screens) */
