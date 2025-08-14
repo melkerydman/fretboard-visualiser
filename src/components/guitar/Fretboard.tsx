@@ -1,9 +1,31 @@
 import React, { useRef, useMemo } from 'react';
-import MusicTheory from '../../services/musicTheory.js';
-import { FRET_MARKERS } from '../../constants/index.js';
-import { useMusicalContext } from '../../context/MusicalContext.jsx';
+import MusicTheory from '../../services/musicTheory';
+import { FRET_MARKERS } from '../../constants';
+import { useMusicalContext } from '../../context/MusicalContext';
+import type { 
+  Tuning, 
+  Capo, 
+  NotePosition, 
+  RecommendedCapoPosition, 
+  FretNumber, 
+  StringIndex 
+} from '../../types';
+import type { UISettings } from '../../types';
 
-const Fretboard = ({
+interface FretboardProps {
+  tuning?: Tuning;
+  capo?: Capo | null;
+  highlightedNotes?: number[];
+  selectedNotes?: NotePosition[];
+  maxFrets?: number;
+  onNoteClick?: (position: NotePosition) => void;
+  onNoteHover?: (position: NotePosition) => void;
+  onCapoMove?: (capo: Capo) => void;
+  recommendedCapoPositions?: RecommendedCapoPosition[];
+  settings?: UISettings;
+}
+
+const Fretboard: React.FC<FretboardProps> = ({
   tuning = MusicTheory.STANDARD_TUNING,
   capo = null,
   highlightedNotes = [],
@@ -14,10 +36,11 @@ const Fretboard = ({
   onCapoMove = () => {},
   recommendedCapoPositions = [],
   settings = {
+    theme: 'system' as const,
+    layoutSize: 'comfortable' as const,
+    leftHanded: false,
     verticalFretboard: false,
     darkMode: false,
-    layoutSize: "comfortable",
-    leftHanded: false,
   }
 }) => {
   const stringCount = tuning.length;
@@ -29,7 +52,7 @@ const Fretboard = ({
   const { musicalContext, getNoteName } = useMusicalContext();
 
   // Helper function to get visual string position
-  const getVisualStringPosition = (logicalString) => {
+  const getVisualStringPosition = (logicalString: StringIndex): number => {
     // Default (right-handed): Low E (0) -> High E (5)
     // Vertical: Low E on left, High E on right
     // Horizontal: Low E on top, High E on bottom
@@ -42,7 +65,7 @@ const Fretboard = ({
   };
 
   // Helper function to get realistic string width (based on Martin D-28)
-  const getStringWidth = (logicalString) => {
+  const getStringWidth = (logicalString: StringIndex): number => {
     // Martin D-28 string gauges: .012, .016, .025w, .032w, .042w, .054w
     // Scale these to reasonable pixel widths for visual representation
     const stringWidths = [
@@ -57,7 +80,7 @@ const Fretboard = ({
   };
 
   // Helper function to get realistic string color (Martin D-28 style)
-  const getStringColor = (logicalString) => {
+  const getStringColor = (logicalString: StringIndex): string => {
     // Low E, A, D, G strings are wound (bronze/phosphor bronze)
     // B and high E are plain steel
     if (logicalString <= 3) {
@@ -97,7 +120,7 @@ const Fretboard = ({
   const neckStartX = isVertical ? neckMargin : neckMargin + headstockLength;
   const neckStartY = isVertical ? neckMargin + headstockLength : neckMargin;
 
-  const svgRef = useRef(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   const notePositions = useMemo(() => {
     if (highlightedNotes.length === 0) return [];
@@ -124,7 +147,7 @@ const Fretboard = ({
     text: settings.darkMode ? "#E5E7EB" : "#374151",
   };
 
-  const isNoteGreyedOut = (fret, stringIndex) => {
+  const isNoteGreyedOut = (fret: FretNumber, stringIndex: StringIndex): boolean => {
     if (!capo || fret === 0) return false;
 
     // capo.fromTop means "from the thin strings" (high-numbered logical strings)
@@ -135,7 +158,7 @@ const Fretboard = ({
     return isStringCovered && fret < capo.fret;
   };
 
-  const handleCapoDrag = (e) => {
+  const handleCapoDrag = (e: MouseEvent): void => {
     e.preventDefault();
     if (!svgRef.current || !capo) return;
 
@@ -160,10 +183,10 @@ const Fretboard = ({
     }
   };
 
-  const handleCapoMouseDown = (e) => {
+  const handleCapoMouseDown = (e: React.MouseEvent): void => {
     e.preventDefault();
-    const handleMouseMove = (e) => handleCapoDrag(e);
-    const handleMouseUp = () => {
+    const handleMouseMove = (e: MouseEvent) => handleCapoDrag(e);
+    const handleMouseUp = (): void => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };

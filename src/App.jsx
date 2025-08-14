@@ -9,7 +9,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "@/context";
-import { Fretboard } from "@/components/guitar/index.js";
+import { Fretboard } from "@/components/guitar";
 import { SettingsModal } from "@/components/ui/modals/index.js";
 import { SettingsIcon } from "@/components/ui/icons/index.js";
 import ModeSelector from "@/components/ui/ModeSelector";
