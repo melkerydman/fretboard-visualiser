@@ -51,3 +51,31 @@ export const HANDEDNESS_OPTIONS = [
     description: "Reversed string order"
   }
 ] as const;
+
+// String order options for fretboard display
+export const STRING_ORDER_OPTIONS = [
+  {
+    value: "low-to-high",
+    label: "Low E to High E",
+    description: "Low E (6th string) on top/left"
+  },
+  {
+    value: "high-to-low",
+    label: "High E to Low E", 
+    description: "High E (1st string) on top/left"
+  }
+] as const;
+
+// Headstock position options for horizontal fretboard
+export const HEADSTOCK_POSITION_OPTIONS = [
+  {
+    value: "left",
+    label: "Left",
+    description: "Headstock on the left side"
+  },
+  {
+    value: "right",
+    label: "Right",
+    description: "Headstock on the right side"
+  }
+] as const;

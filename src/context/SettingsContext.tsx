@@ -19,6 +19,8 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
     verticalFretboard: false,
     layoutSize: "comfortable",
     leftHanded: false,
+    stringOrder: "low-to-high",
+    headstockPosition: "left",
     darkMode: false,
   });
 

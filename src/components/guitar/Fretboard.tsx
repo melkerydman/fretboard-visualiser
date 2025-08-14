@@ -1,7 +1,8 @@
 import React, { useRef, useMemo } from "react";
 import MusicTheory from "../../services/musicTheory";
 import { FRET_MARKERS } from "../../constants";
-import { useMusicalContext } from "../../context/MusicalContext";
+import { useMusicalContext, useSettings } from "../../context";
+import FretboardControls from "../ui/FretboardControls";
 import type {
   Tuning,
   Capo,
@@ -10,7 +11,6 @@ import type {
   FretNumber,
   StringIndex,
 } from "../../types";
-import type { UISettings } from "../../types";
 
 interface FretboardProps {
   tuning?: Tuning;
@@ -22,7 +22,6 @@ interface FretboardProps {
   onNoteHover?: (position: NotePosition) => void;
   onCapoMove?: (capo: Capo) => void;
   recommendedCapoPositions?: RecommendedCapoPosition[];
-  settings?: UISettings;
 }
 
 const Fretboard: React.FC<FretboardProps> = ({
@@ -35,30 +34,22 @@ const Fretboard: React.FC<FretboardProps> = ({
   onNoteHover = () => {},
   onCapoMove = () => {},
   recommendedCapoPositions = [],
-  settings = {
-    theme: "system" as const,
-    layoutSize: "comfortable" as const,
-    leftHanded: false,
-    verticalFretboard: false,
-    darkMode: false,
-  },
 }) => {
+  const { settings } = useSettings();
   const stringCount = tuning.length;
   const isVertical = settings.verticalFretboard;
   const isCompact = settings.layoutSize === "compact";
-  const isLeftHanded = settings.leftHanded;
 
   // Get musical context for smart note naming
   const { musicalContext, getNoteName } = useMusicalContext();
 
   // Helper function to get visual string position
   const getVisualStringPosition = (logicalString: StringIndex): number => {
-    // Right-handed (flipped): High E (0) -> Low E (5)
-    // Left-handed (normal): Low E (0) -> High E (5)
-    // This creates the correct visual layout for each handedness
-
-    // Right-handed flips the string order
-    if (!isLeftHanded) {
+    // Use explicit string order setting instead of left-handed inference
+    // low-to-high: Low E (0) -> High E (5) - natural order
+    // high-to-low: High E (0) -> Low E (5) - flipped order
+    
+    if (settings.stringOrder === 'high-to-low') {
       return stringCount - 1 - logicalString;
     }
     return logicalString;
@@ -117,7 +108,11 @@ const Fretboard: React.FC<FretboardProps> = ({
     : neckHeight + neckMargin * 2 + fretNumberSpace;
 
   // Neck positioning within SVG
-  const neckStartX = isVertical ? neckMargin : neckMargin + headstockLength;
+  const neckStartX = isVertical 
+    ? neckMargin 
+    : settings.headstockPosition === 'left' 
+      ? neckMargin + headstockLength // Headstock on left, neck starts after it
+      : neckMargin; // Headstock on right, neck starts at margin
   const neckStartY = isVertical ? neckMargin + headstockLength : neckMargin;
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -296,7 +291,9 @@ const Fretboard: React.FC<FretboardProps> = ({
     } else {
       // Render frets within neck bounds
       for (let fret = 0; fret <= maxFrets; fret++) {
-        const x = neckStartX + fret * fretWidth;
+        const x = settings.headstockPosition === 'left'
+          ? neckStartX + fret * fretWidth // Normal: fret 0 at left
+          : neckStartX + neckWidth - fret * fretWidth; // Mirrored: fret 0 at right
         elements.push(
           <line
             key={`fret-${fret}`}
@@ -314,7 +311,9 @@ const Fretboard: React.FC<FretboardProps> = ({
       const fretMarkers = FRET_MARKERS;
       fretMarkers.forEach((fret) => {
         if (fret <= maxFrets) {
-          const x = neckStartX + (fret - 0.5) * fretWidth;
+          const x = settings.headstockPosition === 'left'
+            ? neckStartX + (fret - 0.5) * fretWidth // Normal positioning
+            : neckStartX + neckWidth - (fret - 0.5) * fretWidth; // Mirrored positioning
           const markerRadius = isCompact ? 5 : 7;
           const neckCenterY = neckStartY + neckHeight / 2;
           if (fret === 12 || fret === 24) {
@@ -365,9 +364,13 @@ const Fretboard: React.FC<FretboardProps> = ({
         elements.push(
           <line
             key={`string-${string}`}
-            x1={neckStartX - headstockLength} // Extend to left edge of headstock
+            x1={settings.headstockPosition === 'left' 
+              ? neckStartX - headstockLength // Extend to left headstock
+              : neckStartX} // Start at neck
             y1={y}
-            x2={neckStartX + neckWidth}
+            x2={settings.headstockPosition === 'left'
+              ? neckStartX + neckWidth // End at neck
+              : neckStartX + neckWidth + headstockLength} // Extend to right headstock
             y2={y}
             stroke={stringColor}
             strokeWidth={stringWidth}
@@ -408,7 +411,9 @@ const Fretboard: React.FC<FretboardProps> = ({
           </g>
         );
       } else {
-        const x = neckStartX + (rec.fret - 0.5) * fretWidth;
+        const x = settings.headstockPosition === 'left'
+          ? neckStartX + (rec.fret - 0.5) * fretWidth
+          : neckStartX + neckWidth - (rec.fret - 0.5) * fretWidth;
         return (
           <g key={`rec-capo-${rec.fret}`}>
             <rect
@@ -459,8 +464,10 @@ const Fretboard: React.FC<FretboardProps> = ({
         />
       );
     } else {
-      // Horizontal headstock at left
-      const headstockX = neckStartX - headstockLength;
+      // Horizontal headstock position based on setting
+      const headstockX = settings.headstockPosition === 'left'
+        ? neckStartX - headstockLength // Left: before neck
+        : neckStartX + neckWidth; // Right: after neck
       const headstockWidth = headstockLength;
       const headstockHeight = neckHeight; // Same height as neck
       const headstockY = neckStartY;
@@ -531,7 +538,9 @@ const Fretboard: React.FC<FretboardProps> = ({
         </g>
       );
     } else {
-      const x = neckStartX + (capo.fret - 0.5) * fretWidth;
+      const x = settings.headstockPosition === 'left'
+        ? neckStartX + (capo.fret - 0.5) * fretWidth
+        : neckStartX + neckWidth - (capo.fret - 0.5) * fretWidth;
 
       // Calculate which logical strings are covered
       const coveredStrings = [];
@@ -601,7 +610,9 @@ const Fretboard: React.FC<FretboardProps> = ({
         x = neckStartX + (visualString + 0.5) * fretWidth;
         y = neckStartY + (pos.fret === 0 ? -0.3 : pos.fret - 0.5) * fretHeight;
       } else {
-        x = neckStartX + (pos.fret === 0 ? -0.3 : pos.fret - 0.5) * fretWidth;
+        x = settings.headstockPosition === 'left'
+          ? neckStartX + (pos.fret === 0 ? -0.3 : pos.fret - 0.5) * fretWidth
+          : neckStartX + neckWidth - (pos.fret === 0 ? -0.3 : pos.fret - 0.5) * fretWidth;
         const visualString = getVisualStringPosition(pos.string);
         y = neckStartY + (visualString + 0.5) * fretHeight;
       }
@@ -707,7 +718,9 @@ const Fretboard: React.FC<FretboardProps> = ({
         x = neckStartX + neckWidth + 15; // Right side of neck
         y = neckStartY + (fret - 0.5) * fretHeight;
       } else {
-        x = neckStartX + (fret - 0.5) * fretWidth;
+        x = settings.headstockPosition === 'left'
+          ? neckStartX + (fret - 0.5) * fretWidth
+          : neckStartX + neckWidth - (fret - 0.5) * fretWidth;
         y = neckStartY + neckHeight + 15; // Below neck
       }
 
@@ -729,8 +742,10 @@ const Fretboard: React.FC<FretboardProps> = ({
   };
 
   return (
-    <div className="w-full overflow-auto">
-      <svg ref={svgRef} width={width} height={height}>
+    <div className="w-full">
+      <FretboardControls />
+      <div className="overflow-auto">
+        <svg ref={svgRef} width={width} height={height}>
         {/* Enhanced gradient definitions */}
         <defs>
           {/* Subtle wood grain gradient */}
@@ -788,6 +803,7 @@ const Fretboard: React.FC<FretboardProps> = ({
         {renderTuningLabels()}
         {renderFretNumbers()}
       </svg>
+      </div>
     </div>
   );
 };

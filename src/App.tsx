@@ -86,7 +86,6 @@ const AppContent = () => {
                 onNoteHover={handleNoteHover}
                 onCapoMove={handleCapoMove}
                 recommendedCapoPositions={recommendedCapoPositions}
-                settings={settings}
               />
             </div>
           </div>
@@ -104,7 +103,6 @@ const AppContent = () => {
               onNoteHover={handleNoteHover}
               onCapoMove={handleCapoMove}
               recommendedCapoPositions={recommendedCapoPositions}
-              settings={settings}
             />
           </div>
         )}
