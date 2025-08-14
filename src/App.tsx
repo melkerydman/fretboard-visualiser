@@ -13,12 +13,7 @@ import type { NotePosition, Capo, UISettings } from "@/types";
 import { Fretboard } from "@/components/guitar";
 import { SettingsModal } from "@/components/ui/modals";
 import { SettingsIcon } from "@/components/ui/icons";
-import ModeSelector from "@/components/ui/ModeSelector";
-import MainControls from "@/components/ui/MainControls";
-import ChordIdentifier from "@/components/ui/ChordIdentifier";
-import ScaleChords from "@/components/ui/ScaleChords";
-import StatusPanel from "@/components/ui/StatusPanel";
-import CapoControls from "@/components/ui/CapoControls";
+import Dashboard from "@/components/ui/Dashboard";
 
 // Main App Content (uses context)
 const AppContent = () => {
@@ -64,44 +59,6 @@ const AppContent = () => {
     updateSettings(newSettings);
   };
 
-  // Render dashboard content (controls, status, scale chords, capo controls)
-  const renderDashboard = () => (
-    <>
-      {/* Mode Selection */}
-      <ModeSelector />
-
-      {/* Controls */}
-      <MainControls />
-
-      {/* Chord Identifier Controls */}
-      <ChordIdentifier />
-
-      {/* Scale Chords (Scale Mode Only) */}
-      <ScaleChords />
-
-      {/* Status Information Panel */}
-      <StatusPanel />
-
-      {/* Capo Controls */}
-      <CapoControls />
-    </>
-  );
-
-  // Render fretboard
-  const renderFretboard = () => (
-    <Fretboard
-      tuning={currentTuning}
-      capo={capo}
-      highlightedNotes={highlightedNotes}
-      selectedNotes={effectiveSelectedNotes}
-      maxFrets={maxFrets}
-      onNoteClick={handleNoteClick}
-      onNoteHover={handleNoteHover}
-      onCapoMove={handleCapoMove}
-      recommendedCapoPositions={recommendedCapoPositions}
-      settings={settings}
-    />
-  );
 
   const isSpacious = settings.layoutSize === "spacious";
   const isVertical = settings.verticalFretboard;
@@ -134,19 +91,41 @@ const AppContent = () => {
           <div className="lg:flex lg:gap-8 lg:h-full space-y-6 lg:space-y-0">
             {/* Dashboard Column - takes available space */}
             <div className="lg:flex-1 space-y-6 lg:overflow-y-auto lg:max-h-screen lg:min-w-0">
-              {renderDashboard()}
+              <Dashboard />
             </div>
 
             {/* Fretboard Column - only takes space it needs */}
             <div className="lg:flex-shrink-0 lg:flex lg:items-start lg:justify-center">
-              {renderFretboard()}
+              <Fretboard
+                tuning={currentTuning}
+                capo={capo}
+                highlightedNotes={highlightedNotes}
+                selectedNotes={effectiveSelectedNotes}
+                maxFrets={maxFrets}
+                onNoteClick={handleNoteClick}
+                onNoteHover={handleNoteHover}
+                onCapoMove={handleCapoMove}
+                recommendedCapoPositions={recommendedCapoPositions}
+                settings={settings}
+              />
             </div>
           </div>
         ) : (
           /* Standard vertical layout */
           <div className="space-y-6">
-            {renderDashboard()}
-            {renderFretboard()}
+            <Dashboard />
+            <Fretboard
+              tuning={currentTuning}
+              capo={capo}
+              highlightedNotes={highlightedNotes}
+              selectedNotes={effectiveSelectedNotes}
+              maxFrets={maxFrets}
+              onNoteClick={handleNoteClick}
+              onNoteHover={handleNoteHover}
+              onCapoMove={handleCapoMove}
+              recommendedCapoPositions={recommendedCapoPositions}
+              settings={settings}
+            />
           </div>
         )}
       </div>

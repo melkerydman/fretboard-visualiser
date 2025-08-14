@@ -206,6 +206,7 @@ src/
 **Development Approach:**
 - Prefer editing existing files over creating new ones
 - Follow established TypeScript patterns and type definitions
+- **Always create components for reusable code** - extract render methods and reusable UI elements (like buttons, panels, sections) into separate components instead of keeping them as inline render functions
 - **Avoid type casting (`as` keyword) as much as possible** - prefer proper type guards, narrowing, and strict typing
 - **Use ComponentPropsWithRef/WithoutRef when creating component interfaces** - leverage React's built-in types instead of recreating HTML element props
 - **Prefer Pick<Type, 'specific' | 'props'> over Partial<Type>** when you know exactly which properties a component needs - more precise and self-documenting
