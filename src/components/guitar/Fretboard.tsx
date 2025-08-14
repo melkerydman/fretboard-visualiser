@@ -53,12 +53,12 @@ const Fretboard: React.FC<FretboardProps> = ({
 
   // Helper function to get visual string position
   const getVisualStringPosition = (logicalString: StringIndex): number => {
-    // Default (right-handed): Low E (0) -> High E (5)
-    // Vertical: Low E on left, High E on right
-    // Horizontal: Low E on top, High E on bottom
+    // Right-handed (flipped): High E (0) -> Low E (5)
+    // Left-handed (normal): Low E (0) -> High E (5)
+    // This creates the correct visual layout for each handedness
 
-    // Left-handed flips the string order
-    if (isLeftHanded) {
+    // Right-handed flips the string order
+    if (!isLeftHanded) {
       return stringCount - 1 - logicalString;
     }
     return logicalString;
@@ -730,11 +730,7 @@ const Fretboard: React.FC<FretboardProps> = ({
 
   return (
     <div className="w-full overflow-auto">
-      <svg
-        ref={svgRef}
-        width={width}
-        height={height}
-      >
+      <svg ref={svgRef} width={width} height={height}>
         {/* Enhanced gradient definitions */}
         <defs>
           {/* Subtle wood grain gradient */}
@@ -783,7 +779,6 @@ const Fretboard: React.FC<FretboardProps> = ({
             <feDropShadow dx="2" dy="2" stdDeviation="2" floodOpacity="0.3" />
           </filter>
         </defs>
-
 
         {renderHeadstock()}
         {renderFretboard()}
