@@ -1,16 +1,16 @@
-import React, { useRef, useMemo } from 'react';
-import MusicTheory from '../../services/musicTheory';
-import { FRET_MARKERS } from '../../constants';
-import { useMusicalContext } from '../../context/MusicalContext';
-import type { 
-  Tuning, 
-  Capo, 
-  NotePosition, 
-  RecommendedCapoPosition, 
-  FretNumber, 
-  StringIndex 
-} from '../../types';
-import type { UISettings } from '../../types';
+import React, { useRef, useMemo } from "react";
+import MusicTheory from "../../services/musicTheory";
+import { FRET_MARKERS } from "../../constants";
+import { useMusicalContext } from "../../context/MusicalContext";
+import type {
+  Tuning,
+  Capo,
+  NotePosition,
+  RecommendedCapoPosition,
+  FretNumber,
+  StringIndex,
+} from "../../types";
+import type { UISettings } from "../../types";
 
 interface FretboardProps {
   tuning?: Tuning;
@@ -36,12 +36,12 @@ const Fretboard: React.FC<FretboardProps> = ({
   onCapoMove = () => {},
   recommendedCapoPositions = [],
   settings = {
-    theme: 'system' as const,
-    layoutSize: 'comfortable' as const,
+    theme: "system" as const,
+    layoutSize: "comfortable" as const,
     leftHanded: false,
     verticalFretboard: false,
     darkMode: false,
-  }
+  },
 }) => {
   const stringCount = tuning.length;
   const isVertical = settings.verticalFretboard;
@@ -56,7 +56,7 @@ const Fretboard: React.FC<FretboardProps> = ({
     // Default (right-handed): Low E (0) -> High E (5)
     // Vertical: Low E on left, High E on right
     // Horizontal: Low E on top, High E on bottom
-    
+
     // Left-handed flips the string order
     if (isLeftHanded) {
       return stringCount - 1 - logicalString;
@@ -74,7 +74,7 @@ const Fretboard: React.FC<FretboardProps> = ({
       3.2, // D (.032w) - wound
       2.2, // G (.025w) - wound, but thinner
       1.8, // B (.016) - plain steel
-      1.5  // High E (.012) - plain steel, thinnest
+      1.5, // High E (.012) - plain steel, thinnest
     ];
     return stringWidths[logicalString] || 2;
   };
@@ -85,10 +85,10 @@ const Fretboard: React.FC<FretboardProps> = ({
     // B and high E are plain steel
     if (logicalString <= 3) {
       // Wound strings - bronze/copper color
-      return settings.darkMode ? "#CD7F32" : "#B8860B";
+      return "var(--color-string-wound)";
     } else {
       // Plain steel strings - bright metallic
-      return settings.darkMode ? "#C0C0C0" : "#A8A8A8";
+      return "var(--color-string-plain)";
     }
   };
 
@@ -99,22 +99,22 @@ const Fretboard: React.FC<FretboardProps> = ({
   const neckMargin = 30;
   const headstockLength = isVertical ? 60 : 40;
   const fretNumberSpace = 25;
-  
+
   // Calculate neck dimensions
-  const neckWidth = isVertical 
+  const neckWidth = isVertical
     ? stringCount * fretWidth
     : (maxFrets + 1) * fretWidth;
   const neckHeight = isVertical
-    ? (maxFrets + 1) * fretHeight 
+    ? (maxFrets + 1) * fretHeight
     : stringCount * fretHeight;
 
   // Total SVG dimensions including margins and labels
   const width = isVertical
-    ? neckWidth + (neckMargin * 2) + fretNumberSpace
-    : neckWidth + (neckMargin * 2) + headstockLength;
+    ? neckWidth + neckMargin * 2 + fretNumberSpace
+    : neckWidth + neckMargin * 2 + headstockLength;
   const height = isVertical
-    ? neckHeight + (neckMargin * 2) + headstockLength
-    : neckHeight + (neckMargin * 2) + fretNumberSpace;
+    ? neckHeight + neckMargin * 2 + headstockLength
+    : neckHeight + neckMargin * 2 + fretNumberSpace;
 
   // Neck positioning within SVG
   const neckStartX = isVertical ? neckMargin : neckMargin + headstockLength;
@@ -124,37 +124,25 @@ const Fretboard: React.FC<FretboardProps> = ({
 
   const notePositions = useMemo(() => {
     if (highlightedNotes.length === 0) return [];
-    return MusicTheory.findNotePositions(tuning, highlightedNotes, maxFrets, musicalContext);
+    return MusicTheory.findNotePositions(
+      tuning,
+      highlightedNotes,
+      maxFrets,
+      musicalContext
+    );
   }, [tuning, highlightedNotes, maxFrets, musicalContext]);
 
-  const theme = {
-    fretboard: settings.darkMode ? "#3A2818" : "#D4A574", // East Indian Rosewood fretboard color
-    fret: settings.darkMode ? "#C0C0C0" : "#E0E0E0", // Nickel-silver frets
-    nutFret: settings.darkMode ? "#F5F5DC" : "#F8F8FF", // Bone nut color
-    string: settings.darkMode ? "#888" : "#666", // Will be overridden by getStringColor
-    fretMarker: settings.darkMode ? "#F0F8FF" : "#FFF8DC", // Mother of pearl inlay dots
-    note: settings.darkMode ? "#3B82F6" : "#3B82F6",
-    noteStroke: settings.darkMode ? "#1E40AF" : "#1E40AF",
-    selectedNote: settings.darkMode ? "#F59E0B" : "#F59E0B",
-    selectedStroke: settings.darkMode ? "#D97706" : "#D97706",
-    selectedNoteAlt: settings.darkMode ? "#EF4444" : "#EF4444",
-    selectedStrokeAlt: settings.darkMode ? "#DC2626" : "#DC2626",
-    capoNote: settings.darkMode ? "#8B4513" : "#CD853F",
-    capoStroke: settings.darkMode ? "#A0522D" : "#8B4513",
-    greyedNote: settings.darkMode ? "#6B7280" : "#9CA3AF",
-    greyedStroke: settings.darkMode ? "#4B5563" : "#6B7280",
-    capo: settings.darkMode ? "#8B4513" : "#8B4513",
-    text: settings.darkMode ? "#E5E7EB" : "#374151",
-  };
-
-  const isNoteGreyedOut = (fret: FretNumber, stringIndex: StringIndex): boolean => {
+  const isNoteGreyedOut = (
+    fret: FretNumber,
+    stringIndex: StringIndex
+  ): boolean => {
     if (!capo || fret === 0) return false;
 
     // capo.fromTop means "from the thin strings" (high-numbered logical strings)
     // stringIndex is the logical string (0 = low E, 5 = high E)
     const isStringCovered = capo.fromTop
-      ? stringIndex >= stringCount - capo.strings  // Cover highest-numbered strings
-      : stringIndex < capo.strings;                 // Cover lowest-numbered strings
+      ? stringIndex >= stringCount - capo.strings // Cover highest-numbered strings
+      : stringIndex < capo.strings; // Cover lowest-numbered strings
     return isStringCovered && fret < capo.fret;
   };
 
@@ -206,8 +194,8 @@ const Fretboard: React.FC<FretboardProps> = ({
           y={neckStartY}
           width={neckWidth}
           height={neckHeight}
-          fill={theme.fretboard}
-          stroke={settings.darkMode ? "#2A1810" : "#8B4513"}
+          fill="var(--color-fretboard)"
+          stroke="var(--color-border)"
           strokeWidth="2"
           rx="4"
           filter="url(#shadow)"
@@ -235,13 +223,59 @@ const Fretboard: React.FC<FretboardProps> = ({
             y1={y}
             x2={neckStartX + neckWidth}
             y2={y}
-            stroke={fret === 0 ? theme.nutFret : theme.fret}
+            stroke={fret === 0 ? "var(--color-nut)" : "var(--color-fret)"}
             strokeWidth={fret === 0 ? "4" : "2"}
           />
         );
       }
 
-      // Render strings within neck bounds
+      // Render inlay dots first (so strings appear on top)
+      const fretMarkers = FRET_MARKERS;
+      fretMarkers.forEach((fret) => {
+        if (fret <= maxFrets) {
+          const y = neckStartY + (fret - 0.5) * fretHeight;
+          const markerRadius = isCompact ? 5 : 7;
+          const neckCenterX = neckStartX + neckWidth / 2;
+          if (fret === 12 || fret === 24) {
+            // Double dots for octave markers
+            elements.push(
+              <g key={`marker-${fret}`}>
+                <circle
+                  cx={neckCenterX - 30}
+                  cy={y}
+                  r={markerRadius}
+                  fill="url(#pearlGradient)"
+                  stroke="var(--color-border)"
+                  strokeWidth="0.5"
+                />
+                <circle
+                  cx={neckCenterX + 30}
+                  cy={y}
+                  r={markerRadius}
+                  fill="url(#pearlGradient)"
+                  stroke="var(--color-border)"
+                  strokeWidth="0.5"
+                />
+              </g>
+            );
+          } else {
+            // Single dot
+            elements.push(
+              <circle
+                key={`marker-${fret}`}
+                cx={neckCenterX}
+                cy={y}
+                r={markerRadius}
+                fill="url(#pearlGradient)"
+                stroke="var(--color-border)"
+                strokeWidth="0.5"
+              />
+            );
+          }
+        }
+      });
+
+      // Render strings extending to headstock (on top of inlays)
       for (let string = 0; string < stringCount; string++) {
         const visualString = getVisualStringPosition(string);
         const x = neckStartX + (visualString + 0.5) * fretWidth;
@@ -251,7 +285,7 @@ const Fretboard: React.FC<FretboardProps> = ({
           <line
             key={`string-${string}`}
             x1={x}
-            y1={neckStartY}
+            y1={neckStartY - headstockLength} // Extend to top of headstock
             x2={x}
             y2={neckStartY + neckHeight}
             stroke={stringColor}
@@ -270,76 +304,16 @@ const Fretboard: React.FC<FretboardProps> = ({
             y1={neckStartY}
             x2={x}
             y2={neckStartY + neckHeight}
-            stroke={fret === 0 ? theme.nutFret : theme.fret}
+            stroke={fret === 0 ? "var(--color-nut)" : "var(--color-fret)"}
             strokeWidth={fret === 0 ? "3" : "1"}
           />
         );
       }
 
-      // Render strings within neck bounds
-      for (let string = 0; string < stringCount; string++) {
-        const visualString = getVisualStringPosition(string);
-        const y = neckStartY + (visualString + 0.5) * fretHeight;
-        const stringWidth = getStringWidth(string);
-        const stringColor = getStringColor(string);
-        elements.push(
-          <line
-            key={`string-${string}`}
-            x1={neckStartX}
-            y1={y}
-            x2={neckStartX + neckWidth}
-            y2={y}
-            stroke={stringColor}
-            strokeWidth={stringWidth}
-          />
-        );
-      }
-    }
-
-    const fretMarkers = FRET_MARKERS;
-    fretMarkers.forEach((fret) => {
-      if (fret <= maxFrets) {
-        if (isVertical) {
-          const y = neckStartY + (fret - 0.5) * fretHeight;
-          const markerRadius = isCompact ? 5 : 7;
-          const neckCenterX = neckStartX + neckWidth / 2;
-          if (fret === 12 || fret === 24) {
-            // Double dots for octave markers
-            elements.push(
-              <g key={`marker-${fret}`}>
-                <circle
-                  cx={neckCenterX - 18}
-                  cy={y}
-                  r={markerRadius}
-                  fill="url(#pearlGradient)"
-                  stroke={settings.darkMode ? "#C0C0C0" : "#D0D0D0"}
-                  strokeWidth="0.5"
-                />
-                <circle
-                  cx={neckCenterX + 18}
-                  cy={y}
-                  r={markerRadius}
-                  fill="url(#pearlGradient)"
-                  stroke={settings.darkMode ? "#C0C0C0" : "#D0D0D0"}
-                  strokeWidth="0.5"
-                />
-              </g>
-            );
-          } else {
-            // Single dot for other position markers
-            elements.push(
-              <circle
-                key={`marker-${fret}`}
-                cx={neckCenterX}
-                cy={y}
-                r={markerRadius}
-                fill="url(#pearlGradient)"
-                stroke={settings.darkMode ? "#C0C0C0" : "#D0D0D0"}
-                strokeWidth="0.5"
-              />
-            );
-          }
-        } else {
+      // Render inlay dots first (so strings appear on top)
+      const fretMarkers = FRET_MARKERS;
+      fretMarkers.forEach((fret) => {
+        if (fret <= maxFrets) {
           const x = neckStartX + (fret - 0.5) * fretWidth;
           const markerRadius = isCompact ? 5 : 7;
           const neckCenterY = neckStartY + neckHeight / 2;
@@ -349,24 +323,24 @@ const Fretboard: React.FC<FretboardProps> = ({
               <g key={`marker-${fret}`}>
                 <circle
                   cx={x}
-                  cy={neckCenterY - 18}
+                  cy={neckCenterY - 30}
                   r={markerRadius}
                   fill="url(#pearlGradient)"
-                  stroke={settings.darkMode ? "#C0C0C0" : "#D0D0D0"}
+                  stroke="var(--color-border)"
                   strokeWidth="0.5"
                 />
                 <circle
                   cx={x}
-                  cy={neckCenterY + 18}
+                  cy={neckCenterY + 30}
                   r={markerRadius}
                   fill="url(#pearlGradient)"
-                  stroke={settings.darkMode ? "#C0C0C0" : "#D0D0D0"}
+                  stroke="var(--color-border)"
                   strokeWidth="0.5"
                 />
               </g>
             );
           } else {
-            // Single dot for other position markers
+            // Single dot
             elements.push(
               <circle
                 key={`marker-${fret}`}
@@ -374,14 +348,33 @@ const Fretboard: React.FC<FretboardProps> = ({
                 cy={neckCenterY}
                 r={markerRadius}
                 fill="url(#pearlGradient)"
-                stroke={settings.darkMode ? "#C0C0C0" : "#D0D0D0"}
+                stroke="var(--color-border)"
                 strokeWidth="0.5"
               />
             );
           }
         }
+      });
+
+      // Render strings extending to headstock (on top of inlays)
+      for (let string = 0; string < stringCount; string++) {
+        const visualString = getVisualStringPosition(string);
+        const y = neckStartY + (visualString + 0.5) * fretHeight;
+        const stringWidth = getStringWidth(string);
+        const stringColor = getStringColor(string);
+        elements.push(
+          <line
+            key={`string-${string}`}
+            x1={neckStartX - headstockLength} // Extend to left edge of headstock
+            y1={y}
+            x2={neckStartX + neckWidth}
+            y2={y}
+            stroke={stringColor}
+            strokeWidth={stringWidth}
+          />
+        );
       }
-    });
+    }
 
     return elements;
   };
@@ -444,14 +437,14 @@ const Fretboard: React.FC<FretboardProps> = ({
 
   const renderHeadstock = () => {
     const elements = [];
-    
+
     if (isVertical) {
       // Vertical headstock at top
       const headstockY = neckStartY - headstockLength;
       const headstockHeight = headstockLength;
-      const headstockWidth = neckWidth * 0.8; // Slightly narrower than neck
-      const headstockX = neckStartX + (neckWidth - headstockWidth) / 2;
-      
+      const headstockWidth = neckWidth; // Same width as neck
+      const headstockX = neckStartX;
+
       elements.push(
         <rect
           key="headstock"
@@ -459,38 +452,19 @@ const Fretboard: React.FC<FretboardProps> = ({
           y={headstockY}
           width={headstockWidth}
           height={headstockHeight}
-          fill={settings.darkMode ? "#2A1810" : "#8B4513"}
-          stroke={settings.darkMode ? "#1A100A" : "#654321"}
+          fill="var(--color-fretboard)"
+          stroke="var(--color-border)"
           strokeWidth="2"
           rx="6"
         />
       );
-      
-      // Tuning pegs
-      for (let string = 0; string < stringCount; string++) {
-        const visualString = getVisualStringPosition(string);
-        const pegX = headstockX + (visualString + 0.5) * (headstockWidth / stringCount);
-        const pegY = headstockY + headstockHeight * 0.7;
-        
-        elements.push(
-          <circle
-            key={`peg-${string}`}
-            cx={pegX}
-            cy={pegY}
-            r="4"
-            fill={settings.darkMode ? "#C0C0C0" : "#E0E0E0"}
-            stroke={settings.darkMode ? "#A0A0A0" : "#C0C0C0"}
-            strokeWidth="1"
-          />
-        );
-      }
     } else {
       // Horizontal headstock at left
       const headstockX = neckStartX - headstockLength;
       const headstockWidth = headstockLength;
-      const headstockHeight = neckHeight * 0.8; // Slightly narrower than neck
-      const headstockY = neckStartY + (neckHeight - headstockHeight) / 2;
-      
+      const headstockHeight = neckHeight; // Same height as neck
+      const headstockY = neckStartY;
+
       elements.push(
         <rect
           key="headstock"
@@ -498,33 +472,14 @@ const Fretboard: React.FC<FretboardProps> = ({
           y={headstockY}
           width={headstockWidth}
           height={headstockHeight}
-          fill={settings.darkMode ? "#2A1810" : "#8B4513"}
-          stroke={settings.darkMode ? "#1A100A" : "#654321"}
+          fill="var(--color-fretboard)"
+          stroke="var(--color-border)"
           strokeWidth="2"
           rx="6"
         />
       );
-      
-      // Tuning pegs
-      for (let string = 0; string < stringCount; string++) {
-        const visualString = getVisualStringPosition(string);
-        const pegY = headstockY + (visualString + 0.5) * (headstockHeight / stringCount);
-        const pegX = headstockX + headstockWidth * 0.7;
-        
-        elements.push(
-          <circle
-            key={`peg-${string}`}
-            cx={pegX}
-            cy={pegY}
-            r="4"
-            fill={settings.darkMode ? "#C0C0C0" : "#E0E0E0"}
-            stroke={settings.darkMode ? "#A0A0A0" : "#C0C0C0"}
-            strokeWidth="1"
-          />
-        );
-      }
     }
-    
+
     return elements;
   };
 
@@ -533,7 +488,7 @@ const Fretboard: React.FC<FretboardProps> = ({
 
     if (isVertical) {
       const y = neckStartY + (capo.fret - 0.5) * fretHeight;
-      
+
       // Calculate which logical strings are covered (same logic as horizontal)
       const coveredStrings = [];
       if (capo.fromTop) {
@@ -547,12 +502,14 @@ const Fretboard: React.FC<FretboardProps> = ({
           coveredStrings.push(i);
         }
       }
-      
+
       // Convert to visual positions and get bounds
-      const visualStrings = coveredStrings.map(s => getVisualStringPosition(s));
+      const visualStrings = coveredStrings.map((s) =>
+        getVisualStringPosition(s)
+      );
       const minVisualString = Math.min(...visualStrings);
       const maxVisualString = Math.max(...visualStrings);
-      
+
       const startX = neckStartX + (minVisualString + 0.5) * fretWidth;
       const endX = neckStartX + (maxVisualString + 0.5) * fretWidth;
       const capoWidth = endX - startX + 20;
@@ -564,27 +521,18 @@ const Fretboard: React.FC<FretboardProps> = ({
             y={y - 12}
             width={capoWidth}
             height="24"
-            fill={theme.capo}
-            stroke="#654321"
+            fill="var(--color-capo)"
+            stroke="var(--color-capo)"
             strokeWidth="2"
             rx="4"
             className="cursor-move"
             onMouseDown={handleCapoMouseDown}
           />
-          <text
-            x={startX + capoWidth / 2 - 10}
-            y={y}
-            textAnchor="middle"
-            dy="0.35em"
-            className="text-white text-xs font-bold pointer-events-none"
-          >
-            {capo.fret}
-          </text>
         </g>
       );
     } else {
       const x = neckStartX + (capo.fret - 0.5) * fretWidth;
-      
+
       // Calculate which logical strings are covered
       const coveredStrings = [];
       if (capo.fromTop) {
@@ -598,12 +546,14 @@ const Fretboard: React.FC<FretboardProps> = ({
           coveredStrings.push(i);
         }
       }
-      
+
       // Convert to visual positions and get bounds
-      const visualStrings = coveredStrings.map(s => getVisualStringPosition(s));
+      const visualStrings = coveredStrings.map((s) =>
+        getVisualStringPosition(s)
+      );
       const minVisualString = Math.min(...visualStrings);
       const maxVisualString = Math.max(...visualStrings);
-      
+
       const startY = neckStartY + (minVisualString + 0.5) * fretHeight;
       const endY = neckStartY + (maxVisualString + 0.5) * fretHeight;
       const capoHeight = endY - startY + 20;
@@ -615,22 +565,13 @@ const Fretboard: React.FC<FretboardProps> = ({
             y={startY - 10}
             width="24"
             height={capoHeight}
-            fill={theme.capo}
-            stroke="#654321"
+            fill="var(--color-capo)"
+            stroke="var(--color-capo)"
             strokeWidth="2"
             rx="4"
             className="cursor-move"
             onMouseDown={handleCapoMouseDown}
           />
-          <text
-            x={x}
-            y={startY + capoHeight / 2 - 10}
-            textAnchor="middle"
-            dy="0.35em"
-            className="text-white text-xs font-bold pointer-events-none"
-          >
-            {capo.fret}
-          </text>
         </g>
       );
     }
@@ -639,17 +580,19 @@ const Fretboard: React.FC<FretboardProps> = ({
   const renderNotes = () => {
     return notePositions.map((pos, index) => {
       const isGreyed = isNoteGreyedOut(pos.fret, pos.string);
-      
+
       // Check if this specific position is selected
-      const selectedPosition = selectedNotes.find(selPos => 
-        selPos.string === pos.string && selPos.fret === pos.fret
+      const selectedPosition = selectedNotes.find(
+        (selPos) => selPos.string === pos.string && selPos.fret === pos.fret
       );
       const isSelected = !!selectedPosition;
-      
+
       // Count how many times this note value appears in selectedNotes
-      const noteOccurrences = selectedNotes.filter(selPos => selPos.note === pos.note);
-      const occurrenceIndex = noteOccurrences.findIndex(selPos => 
-        selPos.string === pos.string && selPos.fret === pos.fret
+      const noteOccurrences = selectedNotes.filter(
+        (selPos) => selPos.note === pos.note
+      );
+      const occurrenceIndex = noteOccurrences.findIndex(
+        (selPos) => selPos.string === pos.string && selPos.fret === pos.fret
       );
 
       let x, y;
@@ -668,28 +611,28 @@ const Fretboard: React.FC<FretboardProps> = ({
       // Determine note styling based on state
       let fillColor, strokeColor, opacity;
       if (isGreyed) {
-        fillColor = theme.greyedNote;
-        strokeColor = theme.greyedStroke;
+        fillColor = "var(--color-note-greyed)";
+        strokeColor = "var(--color-note-greyed-stroke)";
         opacity = 0.5;
       } else if (isSelected) {
         // Check if this is a capo note
         if (selectedPosition && selectedPosition.isCapo) {
-          fillColor = theme.capoNote;
-          strokeColor = theme.capoStroke;
+          fillColor = "var(--color-note-capo)";
+          strokeColor = "var(--color-note-capo-stroke)";
         } else {
           // Alternate colors for different manual selections of the same note
           if (occurrenceIndex % 2 === 0) {
-            fillColor = theme.selectedNote; // Orange
-            strokeColor = theme.selectedStroke;
+            fillColor = "var(--color-note-selected)"; // Orange
+            strokeColor = "var(--color-note-selected-stroke)";
           } else {
-            fillColor = theme.selectedNoteAlt; // Red
-            strokeColor = theme.selectedStrokeAlt;
+            fillColor = "var(--color-note-selected-alt)"; // Red
+            strokeColor = "var(--color-note-selected-alt-stroke)";
           }
         }
         opacity = 1;
       } else {
-        fillColor = theme.note;
-        strokeColor = theme.noteStroke;
+        fillColor = "var(--color-note)";
+        strokeColor = "var(--color-note-stroke)";
         opacity = 1;
       }
 
@@ -748,7 +691,7 @@ const Fretboard: React.FC<FretboardProps> = ({
           textAnchor="middle"
           dy="0.35em"
           className="text-sm font-bold"
-          fill={theme.text}
+          fill="var(--color-text)"
         >
           {noteName}
         </text>
@@ -775,7 +718,7 @@ const Fretboard: React.FC<FretboardProps> = ({
           y={y}
           textAnchor="middle"
           className="text-xs"
-          fill={theme.text}
+          fill="var(--color-text)"
           fontSize={isCompact ? "10" : "12"}
         >
           {fret}
@@ -791,45 +734,57 @@ const Fretboard: React.FC<FretboardProps> = ({
         ref={svgRef}
         width={width}
         height={height}
-        className={`border rounded-lg shadow-lg ${
-          settings.darkMode ? "border-gray-600" : "border-gray-300"
-        }`}
-        style={{ backgroundColor: theme.fretboard }}
       >
         {/* Enhanced gradient definitions */}
         <defs>
           {/* Subtle wood grain gradient */}
           <linearGradient id="woodGrain" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={theme.fretboard} stopOpacity="1" />
-            <stop offset="25%" stopColor={settings.darkMode ? "#422D1C" : "#E0B080"} stopOpacity="1" />
-            <stop offset="50%" stopColor={theme.fretboard} stopOpacity="1" />
-            <stop offset="75%" stopColor={settings.darkMode ? "#2F1F14" : "#C8986A"} stopOpacity="1" />
-            <stop offset="100%" stopColor={theme.fretboard} stopOpacity="1" />
+            <stop
+              offset="0%"
+              stopColor="var(--color-fretboard)"
+              stopOpacity="1"
+            />
+            <stop offset="25%" stopColor="#422D1C" stopOpacity="1" />
+            <stop
+              offset="50%"
+              stopColor="var(--color-fretboard)"
+              stopOpacity="1"
+            />
+            <stop offset="75%" stopColor="#2F1F14" stopOpacity="1" />
+            <stop
+              offset="100%"
+              stopColor="var(--color-fretboard)"
+              stopOpacity="1"
+            />
           </linearGradient>
-          
+
           {/* Enhanced pearl gradient with more depth */}
           <radialGradient id="pearlGradient" cx="20%" cy="20%" r="80%">
-            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
-            <stop offset="30%" stopColor="#F8F8FF" stopOpacity="1" />
-            <stop offset="70%" stopColor={settings.darkMode ? "#E6E6FA" : "#F0F8FF"} stopOpacity="1" />
-            <stop offset="100%" stopColor={settings.darkMode ? "#D3D3D3" : "#E0E0E0"} stopOpacity="1" />
+            <stop offset="0%" stopColor="var(--color-inlay)" stopOpacity="1" />
+            <stop
+              offset="30%"
+              stopColor="var(--color-inlay)"
+              stopOpacity="0.9"
+            />
+            <stop
+              offset="70%"
+              stopColor="var(--color-inlay)"
+              stopOpacity="0.7"
+            />
+            <stop
+              offset="100%"
+              stopColor="var(--color-inlay)"
+              stopOpacity="0.5"
+            />
           </radialGradient>
-          
+
           {/* Shadow filter for depth */}
           <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="2" dy="2" stdDeviation="2" floodOpacity="0.3"/>
+            <feDropShadow dx="2" dy="2" stdDeviation="2" floodOpacity="0.3" />
           </filter>
         </defs>
-        
-        {/* Main SVG background */}
-        <rect 
-          x="0" 
-          y="0" 
-          width={width} 
-          height={height} 
-          fill={theme.fretboard}
-        />
-        
+
+
         {renderHeadstock()}
         {renderFretboard()}
         {renderRecommendedCapoIndicators()}

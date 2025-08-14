@@ -44,12 +44,12 @@
   --color-input-text: #111827;
 
   /* === GUITAR COLORS === */
-  --color-fretboard: #d4a574; /* East Indian Rosewood */
-  --color-fret: #e0e0e0; /* Nickel-silver frets */
-  --color-nut: #f8f8ff; /* Bone nut */
-  --color-string-wound: #b8860b; /* Bronze wound strings */
-  --color-string-plain: #a8a8a8; /* Steel plain strings */
-  --color-inlay: #fff8dc; /* Mother of pearl */
+  --color-fretboard: #3a2818; /* Dark rosewood (consistent scheme) */
+  --color-fret: #c0c0c0; /* Bright nickel-silver frets */
+  --color-nut: #f5f5dc; /* Bone nut */
+  --color-string-wound: #cd7f32; /* Bronze wound strings */
+  --color-string-plain: #c0c0c0; /* Steel plain strings */
+  --color-inlay: #f0f8ff; /* Bright mother of pearl inlay */
   --color-capo: #8b4513;
 
   /* === MUSICAL COLORS === */
@@ -92,12 +92,6 @@
   --color-input-border: #4b5563;
   --color-input-text: #f9fafb;
 
-  /* === GUITAR COLORS (DARK) === */
-  --color-fretboard: #3a2818; /* Darker rosewood */
-  --color-fret: #c0c0c0; /* Brighter frets in dark */
-  --color-string-wound: #cd7f32; /* Brighter bronze in dark */
-  --color-string-plain: #c0c0c0; /* Brighter steel in dark */
-  --color-inlay: #f0f8ff; /* Brighter inlay in dark */
 
   /* === MUSICAL COLORS (DARK) === */
   --color-note-greyed: #6b7280;
