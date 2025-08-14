@@ -1,6 +1,9 @@
-import React from "react";
 
-const SettingsIcon = ({ className = "w-5 h-5" }) => (
+interface SettingsIconProps {
+  className?: string;
+}
+
+const SettingsIcon = ({ className = "w-5 h-5" }: SettingsIconProps) => (
   <svg
     className={className}
     fill="none"

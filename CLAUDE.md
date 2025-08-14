@@ -209,9 +209,10 @@ src/
 - **Avoid type casting (`as` keyword) as much as possible** - prefer proper type guards, narrowing, and strict typing
 - **Use ComponentPropsWithRef/WithoutRef when creating component interfaces** - leverage React's built-in types instead of recreating HTML element props
 - **Prefer Pick<Type, 'specific' | 'props'> over Partial<Type>** when you know exactly which properties a component needs - more precise and self-documenting
+- **For React component typing, use `{propname}: PropType` approach instead of `React.FC<Props>`** - e.g., `const Component = ({ prop }: ComponentProps) => {}` rather than `const Component: React.FC<ComponentProps> = ({ prop }) => {}`
 - Maintain existing performance optimizations (useMemo patterns)
-- Run `npm run typecheck` after TypeScript changes
-- Run `npm run lint` before committing changes
+- **ALWAYS run `npm run lint` AND `npm run typecheck` after making any code changes** - fix all errors before proceeding
+- Run `npm run typecheck` and `npm run lint` before committing changes
 
 # important-instruction-reminders
 Do what has been asked; nothing more, nothing less.

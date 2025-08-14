@@ -1,6 +1,11 @@
-import React from "react";
+import type { LayoutSize } from "../../../types";
 
-const LayoutIcon = ({ type, className = "w-8 h-8" }) => {
+interface LayoutIconProps {
+  type: LayoutSize;
+  className?: string;
+}
+
+const LayoutIcon = ({ type, className = "w-8 h-8" }: LayoutIconProps) => {
   switch (type) {
     case "compact":
       return (

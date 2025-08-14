@@ -1,11 +1,18 @@
-import React from 'react';
-import { LAYOUT_OPTIONS, THEME_OPTIONS, HANDEDNESS_OPTIONS } from '../../../constants/index.js';
-import { SettingsIcon, CloseIcon, LayoutIcon } from '../icons/index.js';
+import { LAYOUT_OPTIONS, THEME_OPTIONS, HANDEDNESS_OPTIONS } from '../../../constants';
+import { CloseIcon, LayoutIcon } from '../icons';
+import type { UISettings } from '../../../types';
 
-const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange }) => {
+interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  settings: UISettings;
+  onSettingsChange: (settings: UISettings) => void;
+}
+
+const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange }: SettingsModalProps) => {
   if (!isOpen) return null;
 
-  const handleSettingChange = (key, value) => {
+  const handleSettingChange = <K extends keyof UISettings>(key: K, value: UISettings[K]): void => {
     onSettingsChange({ ...settings, [key]: value });
   };
 
