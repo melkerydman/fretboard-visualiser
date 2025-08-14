@@ -9,9 +9,10 @@ import {
   ThemeProvider,
   useTheme,
 } from "@/context";
+import type { NotePosition, Capo, UISettings } from "@/types";
 import { Fretboard } from "@/components/guitar";
-import { SettingsModal } from "@/components/ui/modals/index.js";
-import { SettingsIcon } from "@/components/ui/icons/index.js";
+import { SettingsModal } from "@/components/ui/modals";
+import { SettingsIcon } from "@/components/ui/icons";
 import ModeSelector from "@/components/ui/ModeSelector";
 import MainControls from "@/components/ui/MainControls";
 import ChordIdentifier from "@/components/ui/ChordIdentifier";
@@ -43,7 +44,7 @@ const AppContent = () => {
   const { themeClasses } = useTheme();
 
   // Event handlers
-  const handleNoteClick = (noteData) => {
+  const handleNoteClick = (noteData: NotePosition) => {
     if (viewMode === "identifier") {
       toggleNoteSelection(noteData);
     } else {
@@ -51,15 +52,15 @@ const AppContent = () => {
     }
   };
 
-  const handleNoteHover = (noteData) => {
+  const handleNoteHover = (noteData: NotePosition) => {
     setHoveredNote(noteData);
   };
 
-  const handleCapoMove = (newCapo) => {
+  const handleCapoMove = (newCapo: Capo) => {
     setCapo(newCapo);
   };
 
-  const handleSettingsChange = (newSettings) => {
+  const handleSettingsChange = (newSettings: UISettings) => {
     updateSettings(newSettings);
   };
 
