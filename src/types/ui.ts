@@ -18,28 +18,3 @@ export interface UISettings {
   darkMode?: boolean; // Computed from theme
 }
 
-// Specific theme-related types
-export interface ThemeClasses {
-  bg: string;
-  cardBg: string;
-  border: string;
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  input: string;
-  button: string;
-}
-
-export interface FretboardTheme {
-  fretboard: string;
-  fret: string;
-  nutFret: string;
-  string: string;
-  fretMarker: string;
-  note: string;
-  noteStroke: string;
-  greyedNote: string;
-  greyedStroke: string;
-  capo: string;
-  text: string;
-}

@@ -3,7 +3,7 @@ import { STRING_LABELS } from "../../constants/index.js";
 import InputField from "./InputField";
 import { Tuning } from "../../types/guitar";
 import { Semitone } from "../../types/music";
-import { useMusicalContext, useTheme } from "../../context";
+import { useMusicalContext } from "../../context";
 
 interface CustomTuningSelectorProps {
   tuning: Tuning;
@@ -12,7 +12,6 @@ interface CustomTuningSelectorProps {
 
 const CustomTuningSelector = ({ tuning, onChange }: CustomTuningSelectorProps) => {
   const { getNoteName } = useMusicalContext();
-  const { themeClasses } = useTheme();
   
   const noteOptions = MusicTheory.NOTES.map((_, noteIndex) => ({
     value: noteIndex,
@@ -28,9 +27,7 @@ const CustomTuningSelector = ({ tuning, onChange }: CustomTuningSelectorProps) =
   
   return (
     <div className="space-y-2">
-      <label
-        className={`block text-sm font-medium ${themeClasses.text}`}
-      >
+      <label className="block text-sm font-medium text-[var(--color-text)]">
         Custom Tuning
       </label>
       <div className="grid grid-cols-6 gap-2">
@@ -41,15 +38,11 @@ const CustomTuningSelector = ({ tuning, onChange }: CustomTuningSelectorProps) =
               value={semitone}
               onChange={(value) => handleStringChange(index, value)}
               options={noteOptions}
-              themeClasses={{
-                text: themeClasses.text,
-                input: `${themeClasses.input} p-1 text-sm`
-              }}
             />
           </div>
         ))}
       </div>
-      <div className="text-xs text-gray-500 grid grid-cols-6 gap-2">
+      <div className="text-xs text-[var(--color-text-secondary)] grid grid-cols-6 gap-2">
         {STRING_LABELS.map((label, index) => (
           <span key={index} className="text-center">
             {label}

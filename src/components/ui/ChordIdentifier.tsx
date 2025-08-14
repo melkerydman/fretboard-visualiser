@@ -1,4 +1,4 @@
-import { useGuitar, useMusicalContext, useTheme } from '../../context';
+import { useGuitar, useMusicalContext } from '../../context';
 
 const ChordIdentifier = () => {
   const {
@@ -15,14 +15,13 @@ const ChordIdentifier = () => {
   } = useGuitar();
 
   const { getNoteName, formatNoteNames } = useMusicalContext();
-  const { themeClasses } = useTheme();
 
   if (viewMode !== "identifier") return null;
 
   return (
-    <div className={`${themeClasses.cardBg} rounded-lg shadow-lg p-4 border ${themeClasses.border}`}>
+    <div className="bg-[var(--color-surface)] rounded-lg shadow-lg p-4 border border-[var(--color-border)]">
       <div className="flex items-center justify-between mb-4">
-        <h3 className={`text-lg font-medium ${themeClasses.text}`}>
+        <h3 className="text-lg font-medium text-[var(--color-text)]">
           Chord Identifier
         </h3>
         <div className="flex items-center space-x-3 flex-wrap">
@@ -33,7 +32,7 @@ const ChordIdentifier = () => {
               onChange={toggleShowAllNotes}
               className="mr-2 text-blue-600"
             />
-            <span className={`text-sm ${themeClasses.text}`}>
+            <span className="text-sm text-[var(--color-text)]">
               Show all notes
             </span>
           </label>
@@ -45,14 +44,14 @@ const ChordIdentifier = () => {
                 onChange={toggleIncludeCapoNotes}
                 className="mr-2 text-blue-600"
               />
-              <span className={`text-sm ${themeClasses.text}`}>
+              <span className="text-sm text-[var(--color-text)]">
                 Include capo notes
               </span>
             </label>
           )}
           <button
             onClick={clearSelectedNotes}
-            className={`px-3 py-1 rounded text-sm transition-colors ${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`}
+            className="px-3 py-1 rounded text-sm transition-colors bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-secondary)]"
           >
             Clear Notes
           </button>
@@ -61,7 +60,7 @@ const ChordIdentifier = () => {
       
       {/* Selected Notes Display */}
       <div className="mb-4">
-        <div className={`text-sm font-medium mb-2 ${themeClasses.text}`}>
+        <div className="text-sm font-medium mb-2 text-[var(--color-text)]">
           Selected Notes ({effectiveSelectedNotes.length}):
         </div>
         <div className="flex flex-wrap gap-2">
@@ -84,7 +83,7 @@ const ChordIdentifier = () => {
               </button>
             ))
           ) : (
-            <span className={`text-sm ${themeClasses.textSecondary}`}>
+            <span className="text-sm text-[var(--color-text-secondary)]">
               Click notes on the fretboard to identify chords
             </span>
           )}
@@ -94,16 +93,16 @@ const ChordIdentifier = () => {
       {/* Identified Chords */}
       {identifiedChords.length > 0 && (
         <div>
-          <div className={`text-sm font-medium mb-3 ${themeClasses.text}`}>
+          <div className="text-sm font-medium mb-3 text-[var(--color-text)]">
             Possible Chords:
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {identifiedChords.map((chord, index) => (
               <div
                 key={index}
-                className={`p-3 rounded border ${themeClasses.cardBg} ${themeClasses.border}`}
+                className="p-3 rounded border bg-[var(--color-surface)] border-[var(--color-border)]"
               >
-                <div className={`font-medium ${themeClasses.text} flex items-center justify-between`}>
+                <div className="font-medium text-[var(--color-text)] flex items-center justify-between">
                   <span>{chord.name}</span>
                   <span className={`text-xs px-2 py-1 rounded ${
                     (chord.confidence ?? 0) >= 80 ? "bg-green-500" : 
@@ -112,7 +111,7 @@ const ChordIdentifier = () => {
                     {chord.confidence ?? 0}%
                   </span>
                 </div>
-                <div className={`text-xs mt-1 ${themeClasses.textSecondary}`}>
+                <div className="text-xs mt-1 text-[var(--color-text-secondary)]">
                   Notes: {formatNoteNames(chord.notes)}
                 </div>
                 {chord.isPartial && (

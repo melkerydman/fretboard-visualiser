@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useGuitar, useMusicalContext, useTheme } from '@/context';
+import { useGuitar, useMusicalContext } from '@/context';
 import MusicTheory from '@/services/musicTheory.js';
 import { Chord, ScaleChordGroup, NoteName } from '@/types/music';
 
@@ -13,7 +13,6 @@ const ScaleChords = () => {
   } = useGuitar();
 
   const { getNoteName, formatNoteNames } = useMusicalContext();
-  const { themeClasses } = useTheme();
 
   // Computed scale chords for scale view
   const scaleChords = useMemo((): ScaleChordGroup[] => {
@@ -42,20 +41,18 @@ const ScaleChords = () => {
 
   return (
     <div>
-      <label
-        className={`block text-sm font-medium mb-4 ${themeClasses.text}`}
-      >
+      <label className="block text-sm font-medium mb-4 text-[var(--color-text)]">
         Chords in {selectedRoot} {selectedScale}
       </label>
       
       {/* Horizontal layout: chords horizontally, chord types vertically */}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2 sm:gap-3">
         {scaleChords.map((scaleChord: ScaleChordGroup) => (
-          <div key={scaleChord.root} className={`${themeClasses.cardBg} ${themeClasses.border} border rounded-lg p-2`}>
-            <h4 className={`font-medium ${themeClasses.text} text-center mb-1 text-sm`}>
+          <div key={scaleChord.root} className="bg-[var(--color-surface)] border-[var(--color-border)] border rounded-lg p-2">
+            <h4 className="font-medium text-[var(--color-text)] text-center mb-1 text-sm">
               {scaleChord.root}
             </h4>
-            <div className={`text-xs ${themeClasses.textSecondary} text-center mb-2`}>
+            <div className="text-xs text-[var(--color-text-secondary)] text-center mb-2">
               ({scaleChord.degree})
             </div>
             <div className="space-y-1">
@@ -66,7 +63,7 @@ const ScaleChords = () => {
                   className={`w-full px-1 py-1 rounded text-xs transition-colors border ${
                     selectedScaleChord === chord
                       ? "bg-blue-500 text-white border-blue-500"
-                      : `${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-blue-100 dark:hover:bg-gray-600`
+                      : "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-secondary)]"
                   }`}
                 >
                   {chord.type}
@@ -79,21 +76,19 @@ const ScaleChords = () => {
 
       {/* Selected Scale Chord Information */}
       {selectedScaleChord && (
-        <div
-          className={`mt-4 p-3 rounded-md border ${themeClasses.cardBg} ${themeClasses.border}`}
-        >
+        <div className="mt-4 p-3 rounded-md border bg-[var(--color-surface)] border-[var(--color-border)]">
           <div className="flex items-center justify-between">
-            <span className={`font-medium ${themeClasses.text}`}>
+            <span className="font-medium text-[var(--color-text)]">
               Selected: {selectedScaleChord.name}
             </span>
             <button
               onClick={() => handleScaleChordSelect(null)}
-              className={`px-2 py-1 text-xs rounded transition-colors ${themeClasses.cardBg} ${themeClasses.border} ${themeClasses.text} hover:bg-opacity-80`}
+              className="px-2 py-1 text-xs rounded transition-colors bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-secondary)]"
             >
               Clear
             </button>
           </div>
-          <div className={`text-xs mt-1 ${themeClasses.textSecondary}`}>
+          <div className="text-xs mt-1 text-[var(--color-text-secondary)]">
             Notes: {formatNoteNames(selectedScaleChord.notes)}
           </div>
         </div>

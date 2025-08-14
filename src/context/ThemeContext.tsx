@@ -1,14 +1,12 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { useSettings } from './SettingsContext';
-import { ThemeClasses, ThemeMode, FretboardTheme } from '../types/ui';
+import { ThemeMode } from '../types/ui';
 
 interface ThemeContextType {
   theme: ThemeMode;
   darkMode: boolean;
   systemDarkMode: boolean;
   setTheme: (theme: ThemeMode) => void;
-  themeClasses: ThemeClasses;
-  fretboardTheme: FretboardTheme;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -52,37 +50,6 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     root.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
-  // Theme classes for styling
-  const themeClasses: ThemeClasses = {
-    bg: darkMode ? "bg-gray-900" : "bg-gray-50",
-    cardBg: darkMode ? "bg-gray-800" : "bg-white",
-    text: darkMode ? "text-gray-100" : "text-gray-900",
-    textSecondary: darkMode ? "text-gray-300" : "text-gray-600",
-    textTertiary: darkMode ? "text-gray-400" : "text-gray-500",
-    border: darkMode ? "border-gray-700" : "border-gray-200",
-    button: darkMode
-      ? "bg-gray-700 hover:bg-gray-600 text-gray-100"
-      : "bg-gray-100 hover:bg-gray-200 text-gray-900",
-    input: darkMode
-      ? "bg-gray-700 border-gray-600 text-white focus:border-blue-500"
-      : "bg-white border-gray-300 text-gray-900 focus:border-blue-500",
-  };
-
-  // Fretboard-specific theme
-  const fretboardTheme: FretboardTheme = {
-    fretboard: darkMode ? "#374151" : "#D1D5DB",
-    fret: darkMode ? "#6B7280" : "#9CA3AF",
-    nutFret: darkMode ? "#4B5563" : "#9CA3AF",
-    string: darkMode ? "#9CA3AF" : "#6B7280",
-    fretMarker: darkMode ? "#6B7280" : "#9CA3AF",
-    note: darkMode ? "#3B82F6" : "#2563EB",
-    noteStroke: "#FFFFFF",
-    greyedNote: darkMode ? "#6B7280" : "#9CA3AF",
-    greyedStroke: darkMode ? "#9CA3AF" : "#6B7280",
-    capo: "#F59E0B",
-    text: "#FFFFFF",
-  };
-
   // Update settings when theme changes
   useEffect(() => {
     updateSettings({ darkMode, theme });
@@ -96,7 +63,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   }, [settings.theme, theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, darkMode, systemDarkMode, setTheme, themeClasses, fretboardTheme }}>
+    <ThemeContext.Provider value={{ theme, darkMode, systemDarkMode, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
