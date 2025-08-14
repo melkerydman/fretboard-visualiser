@@ -10,7 +10,7 @@ export type Tuning = Semitone[]; // Array of 6 semitones for standard guitar
 export interface Capo {
   fret: FretNumber;
   strings: number; // How many strings to cover (1-6)
-  fromTop: boolean; // Whether to cover from thin strings (true) or thick strings (false)
+  fromHighE: boolean; // Whether to cover from High E (true) or Low E (false)
 }
 
 export interface NotePosition {

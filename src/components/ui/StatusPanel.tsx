@@ -9,7 +9,6 @@ const StatusPanel = () => {
     selectedScaleChord,
     currentTuning,
     highlightedNotes,
-    capo,
     hoveredNote,
   } = useGuitar();
 
@@ -32,12 +31,6 @@ const StatusPanel = () => {
           <strong>Notes:</strong>{" "}
           {formatNoteNames(highlightedNotes)}
         </span>
-        {capo && (
-          <span className="text-[var(--color-text)]">
-            <strong>Capo:</strong> Fret {capo.fret}, {capo.strings} strings
-            from {capo.fromTop ? "top" : "bottom"}
-          </span>
-        )}
         {hoveredNote && (
           <span className="text-[var(--color-text-secondary)]">
             <strong>Hovered:</strong> {hoveredNote.noteName} (String{" "}

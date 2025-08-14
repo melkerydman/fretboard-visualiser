@@ -19,7 +19,7 @@ export const useFretboard = (
     if (!capo) return tuning;
     
     return tuning.map((stringNote, stringIndex) => {
-      const isCapoed = capo.fromTop 
+      const isCapoed = capo.fromHighE 
         ? stringIndex < capo.strings 
         : stringIndex >= (tuning.length - capo.strings);
       
@@ -55,7 +55,7 @@ export const useFretboard = (
   const isNoteGreyed = (stringIndex: number, fret: number) => {
     if (!capo) return false;
     
-    const isCapoedString = capo.fromTop 
+    const isCapoedString = capo.fromHighE 
       ? stringIndex < capo.strings 
       : stringIndex >= (tuning.length - capo.strings);
     

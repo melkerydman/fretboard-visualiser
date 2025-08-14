@@ -39,12 +39,24 @@ const CapoControls = () => {
             </select>
           </div>
 
-          <button
-            onClick={toggleCapoDirection}
-            className="px-3 py-1 rounded text-sm transition-colors bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-secondary)]"
-          >
-            {capo.fromTop ? "From Top" : "From Bottom"}
-          </button>
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-[var(--color-text)]">
+              From:
+            </label>
+            <select
+              value={capo.fromHighE ? "high-e" : "low-e"}
+              onChange={(e) => {
+                const shouldBeFromHighE = e.target.value === "high-e";
+                if (shouldBeFromHighE !== capo.fromHighE) {
+                  toggleCapoDirection();
+                }
+              }}
+              className="p-1 rounded border text-sm bg-[var(--color-input-bg)] border-[var(--color-input-border)] text-[var(--color-input-text)]"
+            >
+              <option value="low-e">Low E (6th)</option>
+              <option value="high-e">High E (1st)</option>
+            </select>
+          </div>
         </>
       )}
     </div>

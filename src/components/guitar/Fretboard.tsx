@@ -2,7 +2,6 @@ import React, { useRef, useMemo } from "react";
 import MusicTheory from "../../services/musicTheory";
 import { FRET_MARKERS } from "../../constants";
 import { useMusicalContext, useSettings } from "../../context";
-import FretboardControls from "../ui/FretboardControls";
 import type {
   Tuning,
   Capo,
@@ -133,9 +132,9 @@ const Fretboard: React.FC<FretboardProps> = ({
   ): boolean => {
     if (!capo || fret === 0) return false;
 
-    // capo.fromTop means "from the thin strings" (high-numbered logical strings)
+    // capo.fromHighE means "from the High E string" (high-numbered logical strings)
     // stringIndex is the logical string (0 = low E, 5 = high E)
-    const isStringCovered = capo.fromTop
+    const isStringCovered = capo.fromHighE
       ? stringIndex >= stringCount - capo.strings // Cover highest-numbered strings
       : stringIndex < capo.strings; // Cover lowest-numbered strings
     return isStringCovered && fret < capo.fret;
@@ -498,7 +497,7 @@ const Fretboard: React.FC<FretboardProps> = ({
 
       // Calculate which logical strings are covered (same logic as horizontal)
       const coveredStrings = [];
-      if (capo.fromTop) {
+      if (capo.fromHighE) {
         // Cover highest-numbered strings (thin strings)
         for (let i = stringCount - capo.strings; i < stringCount; i++) {
           coveredStrings.push(i);
@@ -544,7 +543,7 @@ const Fretboard: React.FC<FretboardProps> = ({
 
       // Calculate which logical strings are covered
       const coveredStrings = [];
-      if (capo.fromTop) {
+      if (capo.fromHighE) {
         // Cover highest-numbered strings (thin strings)
         for (let i = stringCount - capo.strings; i < stringCount; i++) {
           coveredStrings.push(i);
@@ -742,10 +741,8 @@ const Fretboard: React.FC<FretboardProps> = ({
   };
 
   return (
-    <div className="w-full">
-      <FretboardControls />
-      <div className="overflow-auto">
-        <svg ref={svgRef} width={width} height={height}>
+    <div className="w-full overflow-auto">
+      <svg ref={svgRef} width={width} height={height}>
         {/* Enhanced gradient definitions */}
         <defs>
           {/* Subtle wood grain gradient */}
@@ -803,7 +800,6 @@ const Fretboard: React.FC<FretboardProps> = ({
         {renderTuningLabels()}
         {renderFretNumbers()}
       </svg>
-      </div>
     </div>
   );
 };

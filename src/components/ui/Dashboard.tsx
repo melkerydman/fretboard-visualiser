@@ -3,7 +3,7 @@ import MainControls from "./MainControls";
 import ChordIdentifier from "./ChordIdentifier";
 import ScaleChords from "./ScaleChords";
 import StatusPanel from "./StatusPanel";
-import CapoControls from "./CapoControls";
+import FretboardControls from "./FretboardControls";
 
 const Dashboard = () => {
   return (
@@ -18,8 +18,8 @@ const Dashboard = () => {
       <ScaleChords />
       {/* Status Panel */}
       <StatusPanel />
-      {/* Capo Controls */}
-      <CapoControls />
+      {/* Fretboard Controls */}
+      <FretboardControls />
     </>
   );
 };

@@ -1,14 +1,28 @@
 import { useSettings } from '@/context';
 import { STRING_ORDER_OPTIONS, HEADSTOCK_POSITION_OPTIONS } from '@/constants/ui';
 import InputField from './InputField';
+import CapoControls from './CapoControls';
 import type { StringOrder, HeadstockPosition } from '@/types/ui';
 
 const FretboardControls = () => {
   const { settings, updateSettings } = useSettings();
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="mb-4 p-3 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] space-y-4">
+      {/* Capo Controls */}
+      <div>
+        <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">
+          Capo
+        </label>
+        <CapoControls />
+      </div>
+      
+      {/* Fretboard Orientation Controls */}
+      <div>
+        <label className="block text-sm font-medium mb-2 text-[var(--color-text)]">
+          Fretboard Layout
+        </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* String Order Control */}
         <div>
           <InputField
@@ -44,6 +58,7 @@ const FretboardControls = () => {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

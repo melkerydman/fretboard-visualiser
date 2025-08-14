@@ -145,7 +145,7 @@ export const GuitarProvider = ({ children }: GuitarProviderProps) => {
     };
     
     // Determine which logical strings are covered
-    if (capo.fromTop) {
+    if (capo.fromHighE) {
       // Cover highest-numbered strings (thin strings)
       for (let stringIndex = currentTuning.length - capo.strings; stringIndex < currentTuning.length; stringIndex++) {
         const openNote = currentTuning[stringIndex];
@@ -210,7 +210,7 @@ export const GuitarProvider = ({ children }: GuitarProviderProps) => {
 
   // Complex Action Functions
   const addCapo = () => {
-    setCapo({ fret: 3, strings: 6, fromTop: true });
+    setCapo({ fret: 3, strings: 6, fromHighE: true });
   };
 
   const removeCapo = () => {
@@ -222,7 +222,7 @@ export const GuitarProvider = ({ children }: GuitarProviderProps) => {
   };
 
   const toggleCapoDirection = () => {
-    setCapo(prev => prev ? { ...prev, fromTop: !prev.fromTop } : null);
+    setCapo(prev => prev ? { ...prev, fromHighE: !prev.fromHighE } : null);
   };
 
   const handleScaleChordSelect = (chord: Chord | null) => {
