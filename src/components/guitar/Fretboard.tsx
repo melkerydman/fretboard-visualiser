@@ -148,9 +148,10 @@ const Fretboard: React.FC<FretboardProps> = ({
     let newFret;
     if (isVertical) {
       const y = e.clientY - rect.top;
+      const fretPosition = (y - neckStartY) / fretHeight;
       newFret = Math.max(
         1,
-        Math.min(maxFrets, Math.round((y - neckStartY) / fretHeight))
+        Math.min(maxFrets, Math.floor(fretPosition) + 1)
       );
     } else {
       const x = e.clientX - rect.left;
@@ -158,13 +159,13 @@ const Fretboard: React.FC<FretboardProps> = ({
         // Normal: fret 0 at left, higher frets to the right
         newFret = Math.max(
           1,
-          Math.min(maxFrets, Math.round((x - neckStartX) / fretWidth))
+          Math.min(maxFrets, Math.floor((x - neckStartX) / fretWidth) + 1)
         );
       } else {
         // Mirrored: fret 0 at right, higher frets to the left
         newFret = Math.max(
           1,
-          Math.min(maxFrets, Math.round((neckStartX + neckWidth - x) / fretWidth))
+          Math.min(maxFrets, Math.floor((neckStartX + neckWidth - x) / fretWidth) + 1)
         );
       }
     }
