@@ -154,10 +154,19 @@ const Fretboard: React.FC<FretboardProps> = ({
       );
     } else {
       const x = e.clientX - rect.left;
-      newFret = Math.max(
-        1,
-        Math.min(maxFrets, Math.round((x - neckStartX) / fretWidth))
-      );
+      if (settings.headstockPosition === 'left') {
+        // Normal: fret 0 at left, higher frets to the right
+        newFret = Math.max(
+          1,
+          Math.min(maxFrets, Math.round((x - neckStartX) / fretWidth))
+        );
+      } else {
+        // Mirrored: fret 0 at right, higher frets to the left
+        newFret = Math.max(
+          1,
+          Math.min(maxFrets, Math.round((neckStartX + neckWidth - x) / fretWidth))
+        );
+      }
     }
 
     if (newFret !== capo.fret) {
