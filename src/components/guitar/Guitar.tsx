@@ -2,7 +2,7 @@ import React, { useRef, useMemo } from "react";
 import MusicTheory from "../../services/musicTheory";
 import { FRET_MARKERS } from "../../constants";
 import { useMusicalContext, useSettings } from "../../context";
-
+import Headstock from "./Headstock";
 import type {
   Tuning,
   Capo,
@@ -457,56 +457,6 @@ const Guitar: React.FC<GuitarProps> = ({
     });
   };
 
-  const renderHeadstock = () => {
-    const elements = [];
-
-    if (isVertical) {
-      // Vertical headstock at top
-      const headstockY = neckStartY - headstockLength;
-      const headstockHeight = headstockLength;
-      const headstockWidth = neckWidth; // Same width as neck
-      const headstockX = neckStartX;
-
-      elements.push(
-        <rect
-          key="headstock"
-          x={headstockX}
-          y={headstockY}
-          width={headstockWidth}
-          height={headstockHeight}
-          fill="var(--color-fretboard)"
-          stroke="var(--color-border)"
-          strokeWidth="2"
-          rx="6"
-        />
-      );
-    } else {
-      // Horizontal headstock position based on setting
-      const headstockX =
-        settings.headstockPosition === "left"
-          ? neckStartX - headstockLength // Left: before neck
-          : neckStartX + neckWidth; // Right: after neck
-      const headstockWidth = headstockLength;
-      const headstockHeight = neckHeight; // Same height as neck
-      const headstockY = neckStartY;
-
-      elements.push(
-        <rect
-          key="headstock"
-          x={headstockX}
-          y={headstockY}
-          width={headstockWidth}
-          height={headstockHeight}
-          fill="var(--color-fretboard)"
-          stroke="var(--color-border)"
-          strokeWidth="2"
-          rx="6"
-        />
-      );
-    }
-
-    return elements;
-  };
 
   const renderCapo = () => {
     if (!capo) return null;
@@ -816,7 +766,14 @@ const Guitar: React.FC<GuitarProps> = ({
           </filter>
         </defs>
 
-        {renderHeadstock()}
+        <Headstock
+          isVertical={isVertical}
+          neckStartX={neckStartX}
+          neckStartY={neckStartY}
+          neckWidth={neckWidth}
+          neckHeight={neckHeight}
+          headstockLength={headstockLength}
+        />
         {renderFretboard()}
         {renderRecommendedCapoIndicators()}
         {renderCapo()}
