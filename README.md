@@ -35,7 +35,7 @@ An interactive web application for guitar chord and scale visualisation, created
 - Vite
 - Tailwind CSS
 - SVG for interactive fretboard rendering
-- Claude AI
+- Claude Code
 
 ## Development
 

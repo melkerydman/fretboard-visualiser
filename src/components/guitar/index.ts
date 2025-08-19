@@ -1,1 +1,1 @@
-export { default as Fretboard } from './Fretboard';
+export { default as Guitar } from './Guitar';

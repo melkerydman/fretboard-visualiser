@@ -9,7 +9,7 @@ import {
   ThemeProvider,
 } from "@/context";
 import type { NotePosition, Capo, UISettings } from "@/types";
-import { Fretboard } from "@/components/guitar";
+import { Guitar } from "@/components/guitar";
 import { SettingsModal } from "@/components/ui/modals";
 import { Header } from "@/components/layout";
 import Dashboard from "@/components/ui/Dashboard";
@@ -76,7 +76,7 @@ const AppContent = () => {
 
             {/* Fretboard Column - only takes space it needs */}
             <div className="lg:flex-shrink-0 lg:flex lg:items-start lg:justify-center">
-              <Fretboard
+              <Guitar
                 tuning={currentTuning}
                 capo={capo}
                 highlightedNotes={highlightedNotes}
@@ -93,7 +93,7 @@ const AppContent = () => {
           /* Standard vertical layout */
           <div className="space-y-6">
             <Dashboard />
-            <Fretboard
+            <Guitar
               tuning={currentTuning}
               capo={capo}
               highlightedNotes={highlightedNotes}
