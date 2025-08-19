@@ -1,6 +1,6 @@
-# Fretboard Visualizer
+# Fretboard Visualiser
 
-An interactive web application for guitar chord and scale visualization, created as an experiment in AI-assisted development using Claude. The idea came from playing guitar in a variety of different tunings - with a rather basic understanding of what I do, I wanted a tool that could help me navigate the fretboard in any tuning.
+An interactive web application for guitar chord and scale visualisation, created as an experiment in AI-assisted development using Claude. The idea came from playing guitar in a variety of different tunings - with a rather basic understanding of what I do, I wanted a tool that could help me navigate the fretboard in any tuning.
 
 ## Features
 
@@ -11,7 +11,7 @@ An interactive web application for guitar chord and scale visualization, created
 
 **Scale explorer mode**
 
-- Visualize scale patterns across the entire fretboard
+- Visualise scale patterns across the entire fretboard
 - Major, minor, pentatonic, and other common scales
 - See related chords that work with each scale
 

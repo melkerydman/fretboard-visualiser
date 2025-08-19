@@ -1,5 +1,5 @@
 {
-  "name": "fretboard-visualizer",
+  "name": "fretboard-visualiser",
   "engines": {
     "node": "22.16.0",
     "npm": ">=9.0.0"
