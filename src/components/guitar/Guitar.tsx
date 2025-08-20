@@ -4,6 +4,7 @@ import { FRET_MARKERS } from "../../constants";
 import { useMusicalContext, useSettings } from "../../context";
 import Headstock from "./Headstock";
 import Fretboard from "./Fretboard";
+import RecommendedCapoIndicators from "./RecommendedCapoIndicators";
 import type {
   Tuning,
   Capo,
@@ -16,7 +17,7 @@ import type {
 // TODO: Component Extraction Progress
 // ✅ Extract renderHeadstock into Headstock component
 // ✅ Extract renderFretboard into Fretboard component
-// ⏳ Extract renderRecommendedCapoIndicators into RecommendedCapoIndicators component
+// ✅ Extract renderRecommendedCapoIndicators into RecommendedCapoIndicators component
 // ⏳ Extract renderCapo into Capo component
 // ⏳ Extract renderNotes into Notes component
 // ⏳ Extract renderTuningLabels into TuningLabels component
@@ -199,64 +200,6 @@ const Guitar: React.FC<GuitarProps> = ({
   };
 
 
-  const renderRecommendedCapoIndicators = () => {
-    return recommendedCapoPositions.slice(0, 3).map((rec, index) => {
-      const opacity = 1 - index * 0.3;
-
-      if (isVertical) {
-        const y = neckStartY + (rec.fret - 0.5) * fretHeight;
-        return (
-          <g key={`rec-capo-${rec.fret}`}>
-            <rect
-              x={neckMargin - 25}
-              y={y - 7.5}
-              width="20"
-              height="15"
-              fill="#10B981"
-              opacity={opacity}
-              rx="3"
-            />
-            <text
-              x={neckMargin - 15}
-              y={y}
-              textAnchor="middle"
-              dy="0.35em"
-              className="text-xs font-bold text-white pointer-events-none"
-            >
-              {rec.matchingStrings}
-            </text>
-          </g>
-        );
-      } else {
-        const x =
-          settings.headstockPosition === "left"
-            ? neckStartX + (rec.fret - 0.5) * fretWidth
-            : neckStartX + neckWidth - (rec.fret - 0.5) * fretWidth;
-        return (
-          <g key={`rec-capo-${rec.fret}`}>
-            <rect
-              x={x - 10}
-              y={neckMargin - 25}
-              width="20"
-              height="15"
-              fill="#10B981"
-              opacity={opacity}
-              rx="3"
-            />
-            <text
-              x={x}
-              y={neckMargin - 17.5}
-              textAnchor="middle"
-              dy="0.35em"
-              className="text-xs font-bold text-white pointer-events-none"
-            >
-              {rec.matchingStrings}
-            </text>
-          </g>
-        );
-      }
-    });
-  };
 
 
   const renderCapo = () => {
@@ -591,7 +534,16 @@ const Guitar: React.FC<GuitarProps> = ({
           getStringWidth={getStringWidth}
           getStringColor={getStringColor}
         />
-        {renderRecommendedCapoIndicators()}
+        <RecommendedCapoIndicators
+          recommendedCapoPositions={recommendedCapoPositions}
+          isVertical={isVertical}
+          neckStartX={neckStartX}
+          neckStartY={neckStartY}
+          neckWidth={neckWidth}
+          fretWidth={fretWidth}
+          fretHeight={fretHeight}
+          neckMargin={neckMargin}
+        />
         {renderCapo()}
         {renderNotes()}
         {renderTuningLabels()}
