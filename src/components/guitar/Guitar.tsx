@@ -8,6 +8,7 @@ import RecommendedCapoIndicators from "./RecommendedCapoIndicators";
 import Capo from "./Capo";
 import Notes from "./Notes";
 import TuningLabels from "./TuningLabels";
+import FretNumbers from "./FretNumbers";
 import type {
   Tuning,
   Capo as CapoType,
@@ -24,7 +25,8 @@ import type {
 // ✅ Extract renderCapo into Capo component
 // ✅ Extract renderNotes into Notes component
 // ✅ Extract renderTuningLabels into TuningLabels component
-// ⏳ Extract renderFretNumbers into FretNumbers component
+// ✅ Extract renderFretNumbers into FretNumbers component
+// 🎉 All render functions have been extracted into components!
 
 interface GuitarProps {
   tuning?: Tuning;
@@ -208,37 +210,6 @@ const Guitar: React.FC<GuitarProps> = ({
 
 
 
-  const renderFretNumbers = () => {
-    const numbers = [];
-    for (let fret = 1; fret <= maxFrets; fret++) {
-      let x, y;
-      if (isVertical) {
-        x = neckStartX + neckWidth + 15; // Right side of neck
-        y = neckStartY + (fret - 0.5) * fretHeight;
-      } else {
-        x =
-          settings.headstockPosition === "left"
-            ? neckStartX + (fret - 0.5) * fretWidth
-            : neckStartX + neckWidth - (fret - 0.5) * fretWidth;
-        y = neckStartY + neckHeight + 15; // Below neck
-      }
-
-      numbers.push(
-        <text
-          key={`fret-num-${fret}`}
-          x={x}
-          y={y}
-          textAnchor="middle"
-          className="text-xs"
-          fill="var(--color-text)"
-          fontSize={isCompact ? "10" : "12"}
-        >
-          {fret}
-        </text>
-      );
-    }
-    return numbers;
-  };
 
   return (
     <div className="w-full overflow-auto">
@@ -363,7 +334,17 @@ const Guitar: React.FC<GuitarProps> = ({
           getVisualStringPosition={getVisualStringPosition}
           getNoteName={getNoteName}
         />
-        {renderFretNumbers()}
+        <FretNumbers
+          maxFrets={maxFrets}
+          isVertical={isVertical}
+          isCompact={isCompact}
+          neckStartX={neckStartX}
+          neckStartY={neckStartY}
+          neckWidth={neckWidth}
+          neckHeight={neckHeight}
+          fretWidth={fretWidth}
+          fretHeight={fretHeight}
+        />
       </svg>
     </div>
   );
