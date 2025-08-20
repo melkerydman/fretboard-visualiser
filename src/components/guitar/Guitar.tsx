@@ -1,14 +1,15 @@
 import React, { useRef, useMemo } from "react";
 import MusicTheory from "../../services/musicTheory";
-import { FRET_MARKERS } from "../../constants";
 import { useMusicalContext, useSettings } from "../../context";
-import Headstock from "./Headstock";
-import Fretboard from "./Fretboard";
-import RecommendedCapoIndicators from "./RecommendedCapoIndicators";
-import Capo from "./Capo";
-import Notes from "./Notes";
-import TuningLabels from "./TuningLabels";
-import FretNumbers from "./FretNumbers";
+import {
+  Headstock,
+  Fretboard,
+  RecommendedCapoIndicators,
+  Capo,
+  Notes,
+  TuningLabels,
+  FretNumbers,
+} from "./";
 import type {
   Tuning,
   Capo as CapoType,
@@ -17,7 +18,6 @@ import type {
   FretNumber,
   StringIndex,
 } from "../../types";
-
 
 interface GuitarProps {
   tuning?: Tuning;
@@ -194,13 +194,6 @@ const Guitar: React.FC<GuitarProps> = ({
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
-
-
-
-
-
-
-
 
   return (
     <div className="w-full overflow-auto">

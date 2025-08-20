@@ -191,6 +191,7 @@ src/
 2. Create comprehensive shared types file for remaining JavaScript components
 3. **TODO: Refactor InputField to be properly polymorphic** - currently uses non-elegant interface approach for min/max props
 4. Convert remaining hooks and services to TypeScript if not already done
+5. **TODO: Reduce prop drilling in Guitar components** - extracted components share many layout props that could be simplified via GuitarLayoutContext or compound component pattern
 
 ## Claude Code Instructions
 
