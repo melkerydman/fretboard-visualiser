@@ -7,6 +7,7 @@ import Fretboard from "./Fretboard";
 import RecommendedCapoIndicators from "./RecommendedCapoIndicators";
 import Capo from "./Capo";
 import Notes from "./Notes";
+import TuningLabels from "./TuningLabels";
 import type {
   Tuning,
   Capo as CapoType,
@@ -22,7 +23,7 @@ import type {
 // ✅ Extract renderRecommendedCapoIndicators into RecommendedCapoIndicators component
 // ✅ Extract renderCapo into Capo component
 // ✅ Extract renderNotes into Notes component
-// ⏳ Extract renderTuningLabels into TuningLabels component
+// ✅ Extract renderTuningLabels into TuningLabels component
 // ⏳ Extract renderFretNumbers into FretNumbers component
 
 interface GuitarProps {
@@ -206,36 +207,6 @@ const Guitar: React.FC<GuitarProps> = ({
 
 
 
-  const renderTuningLabels = () => {
-    return tuning.map((note, stringIndex) => {
-      const noteName = getNoteName(note);
-
-      let x, y;
-      if (isVertical) {
-        const visualString = getVisualStringPosition(stringIndex);
-        x = neckStartX + (visualString + 0.5) * fretWidth;
-        y = 20;
-      } else {
-        x = 20;
-        const visualString = getVisualStringPosition(stringIndex);
-        y = neckStartY + (visualString + 0.5) * fretHeight;
-      }
-
-      return (
-        <text
-          key={`tuning-${stringIndex}`}
-          x={x}
-          y={y}
-          textAnchor="middle"
-          dy="0.35em"
-          className="text-sm font-bold"
-          fill="var(--color-text)"
-        >
-          {noteName}
-        </text>
-      );
-    });
-  };
 
   const renderFretNumbers = () => {
     const numbers = [];
@@ -382,7 +353,16 @@ const Guitar: React.FC<GuitarProps> = ({
           onNoteClick={onNoteClick}
           onNoteHover={onNoteHover}
         />
-        {renderTuningLabels()}
+        <TuningLabels
+          tuning={tuning}
+          isVertical={isVertical}
+          neckStartX={neckStartX}
+          neckStartY={neckStartY}
+          fretWidth={fretWidth}
+          fretHeight={fretHeight}
+          getVisualStringPosition={getVisualStringPosition}
+          getNoteName={getNoteName}
+        />
         {renderFretNumbers()}
       </svg>
     </div>
