@@ -18,15 +18,6 @@ import type {
   StringIndex,
 } from "../../types";
 
-// TODO: Component Extraction Progress
-// ✅ Extract renderHeadstock into Headstock component
-// ✅ Extract renderFretboard into Fretboard component
-// ✅ Extract renderRecommendedCapoIndicators into RecommendedCapoIndicators component
-// ✅ Extract renderCapo into Capo component
-// ✅ Extract renderNotes into Notes component
-// ✅ Extract renderTuningLabels into TuningLabels component
-// ✅ Extract renderFretNumbers into FretNumbers component
-// 🎉 All render functions have been extracted into components!
 
 interface GuitarProps {
   tuning?: Tuning;
